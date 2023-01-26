@@ -12,6 +12,7 @@ beautifulsoup4 = "*"
 pandas = "*"
 openpyxl = "*"
 spacy = "*"
+jinja2 = "*"
 
 [dev-packages]
 
