@@ -12,7 +12,7 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 from pathlib import Path, PosixPath
-
+import shutil
 
 from doc_extract import extractions as ex
 
@@ -40,11 +40,15 @@ class Document:
             raise TypeError
             
         self.filepath = path
+        self.filename_original = path.stem
+        self.filename_modified = None
+        self.file_extension = path.suffix
         self.filetype = self.determine_filetype(path)
         extractions = self.apply_extraction(logger)
         for k,v in extractions.items():
             setattr(self, k, v)
         self.run_pipeline()
+        self.rename_file()
 
     def determine_filetype(self, path):
         """Determine the format of the filepath."""
@@ -71,3 +75,28 @@ class Document:
 
     def run_pipeline(self):
         self.docs = nlp.pipe(self.text)
+
+    def rename_file(self):
+        if self.title:
+            self.filename_modified = self.title + self.file_extension
+        else:
+            self.filename_modified = self.filename_original + self.file_extension
+        return 1
+
+    def save_modified_file(self, filepath_modified):
+        """Copy the original file with the modified name.
+        
+        This is the only method not automatically performed on initialization
+        because it is making modification outside the object.
+        """
+        filepath_dst = filepath_modified / self.filename_modified
+        shutil.copy(src=self.filepath,
+                    dst=filepath_dst
+        )
+        return 1
+
+    def pretty_print_toc(self):
+        outlines = self.toc
+        if outlines:
+            for(level,title,dest,a,se) in outlines:
+                print(' '.join(title.split(' ')[1:])) 

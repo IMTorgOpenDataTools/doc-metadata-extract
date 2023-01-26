@@ -17,7 +17,7 @@ import pytest
 
 
 def test_create_report():
-    template_path = './doc_extract/templates'
+    template_path = './tests/data'
     report = Report(logger, template_path)
     html = report.create_report()
     assert html == '<h1>Hello World!</h1>'

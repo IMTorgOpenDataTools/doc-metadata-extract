@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 logzero = "*"
-pypdf2 = "*"
 python-docx = "*"
 pytest = "*"
 beautifulsoup4 = "*"
@@ -13,6 +12,11 @@ pandas = "*"
 openpyxl = "*"
 spacy = "*"
 jinja2 = "*"
+pypdf = "*"
+pdfminer = "*"
+pdftitle = "*"
+"pdfminer.six" = "*"
+pymupdf = "*"
 
 [dev-packages]
 

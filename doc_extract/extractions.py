@@ -10,6 +10,8 @@ Notes on getting text:
 * then Document performs text processing
 
 TODO:
+* convert all file types to pdf, then extract using pdf.miner
+* limit retrieval to N excerpts
 * use optimal storage: `from collections import namedtuple`   #ref: https://stackoverflow.com/questions/1336791/dictionary-vs-object-which-is-more-efficient-and-why
 """
 
@@ -18,17 +20,29 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 
-import docx
+
+import pandas as pd
+
 import bs4
 from bs4.element import Comment
-import PyPDF2
-import pandas as pd
+
+import docx
+
+import pypdf
+import pdftitle                                                                 #uses pdfminer
+from pdfminer.high_level import extract_text as pdf_extract_text                #uses pdfminer.six, problem TODO???
+from pdfminer.high_level import extract_pages as pdf_extract_pages
+from pdfminer.pdfparser import PDFParser
+from pdfminer.pdfdocument import PDFDocument
+import fitz
+
 
 
 
 record = {'title': None,
           'page_nos': None,
           'length_lines': None,
+          'toc': None,
           'text': None
         }
 
@@ -38,8 +52,16 @@ def get_title(txt):
     pass
 
 def clean_text(txt):
-    combined_txt = ('.').join(txt)
-    return combined_txt.replace('.','.  ').replace('.\n','')
+    if type(txt) is list:
+        combined_txt = ('.').join(txt)
+        return combined_txt.replace('.','.  ').replace('\n',' ')
+    elif type(txt) is str:
+        txts = txt.split('.\n')
+        txts = [txt.replace('-\n','').replace('\n',' ') for txt in txts]
+        return txts
+    else:
+        return txt
+
 
 
 
@@ -100,17 +122,52 @@ def extract_pdf(self, logger):
     
     'text': pages
     """
-    with open(self.filepath.__str__(), 'rb') as f:
-        pdfReader = PyPDF2.PdfReader(f)
-        excerpts = []
-        page_nos = len(pdfReader.pages)
-        for page in page_nos:
-            page_txt = pdfReader.getPage(page).extractText()
-            excerpts.appned(page_txt)
+    def get_title(title):
+        if not title:
+            with open(self.filepath.__str__(), 'rb') as f:
+                pdfReader = pypdf.PdfReader(f)
+                first_str = len(excerpts[0])
+                if pdfReader.metadata['/Title']:
+                    title = pdfReader.metadata['/Title']
+                elif first_str>0 and first_str<100:
+                    title = first_str
+                else:
+                    pass
+        return title
 
-        record['title'] = pdfReader.metadata['/Title']
-        record['page_nos'] = page_nos
-        record['text'] = excerpts
+    def get_toc():
+        outlines = None
+        with open(self.filepath.__str__(), 'rb') as fp:
+            parser = PDFParser(fp)
+            document = PDFDocument(parser)
+            # Get the outlines of the document.
+            try:
+                outlines = list(document.get_outlines())
+            except:
+                pass
+        if not outlines:
+            doc = fitz.open(self.filepath.__str__())
+            tmp = doc.get_toc()
+            outlines = tmp if tmp != [] else None
+        return outlines
+
+
+    title = None
+    try:
+        title = pdftitle.get_title_from_file(self.filepath.__str__())
+    except Exception:
+        logger.info("`pdftitle` module threw error")
+        pass
+    raw_text = pdf_extract_text(self.filepath.__str__())
+    excerpts = clean_text(raw_text)
+    pages_gen = pdf_extract_pages(self.filepath.__str__())
+    page_nos = sum(1 for x in pages_gen)
+
+    record['title'] = get_title(title)
+    record['page_nos'] = page_nos
+    record['toc'] = get_toc()
+    record['text'] = excerpts
+
     return record
 
 
