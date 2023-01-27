@@ -137,18 +137,17 @@ def extract_pdf(self, logger):
 
     def get_toc():
         outlines = None
-        with open(self.filepath.__str__(), 'rb') as fp:
-            parser = PDFParser(fp)
-            document = PDFDocument(parser)
-            # Get the outlines of the document.
-            try:
-                outlines = list(document.get_outlines())
-            except:
-                pass
+        doc = fitz.open(self.filepath.__str__())
+        tmp = doc.get_toc()
+        outlines = tmp if tmp != [] else None
         if not outlines:
-            doc = fitz.open(self.filepath.__str__())
-            tmp = doc.get_toc()
-            outlines = tmp if tmp != [] else None
+            with open(self.filepath.__str__(), 'rb') as fp:
+                parser = PDFParser(fp)
+                document = PDFDocument(parser)
+                try:
+                    outlines = list(document.get_outlines())
+                except:
+                    pass
         return outlines
 
 
