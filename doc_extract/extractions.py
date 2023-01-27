@@ -23,11 +23,15 @@ __license__ = "MIT"
 
 import pandas as pd
 
-import bs4
-from bs4.element import Comment
-
+#docx
 import docx
 
+#html
+import bs4
+from bs4.element import Comment
+from xhtml2pdf import pisa 
+
+#pdf
 import pypdf
 import pdftitle                                                                 #uses pdfminer
 from pdfminer.high_level import extract_text as pdf_extract_text                #uses pdfminer.six, problem TODO???
@@ -62,10 +66,37 @@ def clean_text(txt):
     else:
         return txt
 
+def html_string_to_pdf(content, output):
+    """
+    Generate a pdf using a string content
+
+    content : str - content to write in the pdf file
+    output  : str - name of the file to create
+    """
+    # Open file to write
+    result_file = open(output, "w+b") # w+b to write in binary mode.
+    # convert HTML to PDF
+    pisa_status = pisa.CreatePDF(
+            content,                   # the HTML to convert
+            dest=result_file           # file handle to recieve result
+    )           
+    # close output file
+    result_file.close()
+    result = pisa_status.err
+    if not result:
+        print("Successfully created PDF")
+    else:
+        print("Error: unable to create the PDF")    
+    # return False on success and True on errors
+    return result
 
 
 
-def extract_docx(self, logger):
+
+
+
+
+def extract_docx_original(self, logger):
     """Extract from docx filetype.
     
     'text': excerpts.paragraphs
@@ -83,12 +114,33 @@ def extract_docx(self, logger):
     return record
 
 
-def extract_html(self, logger):
+def extract_docx(self, logger):
+    """Extract from docx using `extract_pdf`
+    
+    'text': excerpts.paragraphs
+    """
+    try:
+        excerpts = docx.Document(self.filepath)
+    except:
+        logger.info("TypeError: document not of type `.docx`")
+        return None
+    txt_lst = [par.text for par in excerpts.paragraphs]
+    txt = ''.join(txt_lst)
+
+    tmp_file = self.filepath.parent / (self.filepath.stem + '.pdf')
+    html_string_to_pdf(content = txt, 
+                       output = tmp_file
+                      )
+    self.filepath = tmp_file
+    record = extract_pdf(self, logger)
+    return record
+
+
+def extract_html_original(self, logger):
     """Extract for html filetype.
     
     'text': visible text
     """
-
     #ref: https://stackoverflow.com/questions/1936466/how-to-scrape-only-visible-webpage-text-with-beautifulsoup
     def tag_visible(element):
         if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
@@ -111,9 +163,23 @@ def extract_html(self, logger):
         logger.info("TypeError: document not of type `.html`")
         return None
     txt = text_from_html(excerpts)
-
     record['title'] = excerpts.find('title').text
     record['text'] = txt
+    return record
+    
+
+def extract_html(self, logger):
+    """Extract from html using `extract_pdf`
+    TODO: fix so that .pdf is removed when finished
+    """
+    with open(self.filepath.__str__(), 'r') as f:
+        html = f.read()
+    tmp_file = self.filepath.parent / (self.filepath.stem + '.pdf')
+    html_string_to_pdf(content = html, 
+                       output = tmp_file
+                      )
+    self.filepath = tmp_file
+    record = extract_pdf(self, logger)
     return record
 
 

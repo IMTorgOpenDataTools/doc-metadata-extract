@@ -28,6 +28,8 @@ class Document:
                          '.csv': ex.extract_csv,
                          '.xlsx': ex.extract_xlsx
                         }
+    #TODO: word_extensions = [".doc", ".odt", ".rtf", ".docx", ".dotm", ".docm"]
+    #TODO: ppt_extensions = [".ppt", ".pptx"]
 
     def __init__(self, logger, path):
         cond1 = type(path) == PosixPath

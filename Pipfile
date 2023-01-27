@@ -17,6 +17,7 @@ pdfminer = "*"
 pdftitle = "*"
 "pdfminer.six" = "*"
 pymupdf = "*"
+xhtml2pdf = "*"
 
 [dev-packages]
 
