@@ -41,16 +41,10 @@ from pdfminer.pdfdocument import PDFDocument
 import fitz
 
 
+from doc_extract.utils import record
 
 
-record = {'title': None,
-          'page_nos': None,
-          'length_lines': None,
-          'toc': None,
-          'text': None
-        }
 
-"""add keys: author, tag_categories, toc_chapter_headers, summary"""
 
 def get_title(txt):
     pass

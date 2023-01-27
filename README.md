@@ -14,8 +14,8 @@ This project extracts metadata from a document to index it for quick review.
 ## TODO
 
 * continue with demo/*.pdf
+* add table to index.html [ref](https://codepen.io/jopico/pen/kyRprJ)
 * finish main.py workflow with index.html
-* add table to index.html
 * deploy to lsf
 
 

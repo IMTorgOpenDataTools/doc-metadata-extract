@@ -10,8 +10,9 @@ __license__ = "MIT"
 
 
 from jinja2 import Environment, FileSystemLoader
-
 from pathlib import Path
+
+from doc_extract.utils import record
 
 
 class Report:
@@ -28,10 +29,10 @@ class Report:
             logger.info("`template_path` arg must be directory")
             raise TypeError
         
-    def create_report(self, output_path=False):
+    def create_report(self, template, template_args, output_path=False):
         env = Environment(loader=FileSystemLoader(self.template_path))
-        template = env.get_template('report.html')
-        output_from_parsed_template = template.render(foo='Hello World!')
+        template = env.get_template(template)
+        output_from_parsed_template = template.render(template_args)
 
         if output_path:
             with open(output_path, "w") as fh:
@@ -39,3 +40,7 @@ class Report:
             return None
         else:
             return output_from_parsed_template
+
+    def save_report(self, html, filepath):
+        with open(filepath, "w") as f:
+            f.write(html)
