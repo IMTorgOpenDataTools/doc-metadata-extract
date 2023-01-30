@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="css/style.css" rel="stylesheet">
+
+    <style>
+        .item1 {
+            grid-area: header;
+        }
+        
+        .item2 {
+            grid-area: menu;
+        }
+        
+        .item3 {
+            grid-area: main;
+        }
+        
+        .item4 {
+            grid-area: right;
+        }
+        
+        .item5 {
+            grid-area: footer;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-areas: 'header header header header header header' 'menu main main main right right' 'menu footer footer footer footer footer';
+            gap: 10px;
+            background-color: #eff4f8;
+            padding: 10px;
+        }
+        
+        .grid-container>div {
+            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 20px 0;
+            font-size: 30px;
+        }
+        
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+        
+        tr.open {
+            display: inline;
+        }
+        
+        tr.fold {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="grid-container">
+        <div class="item1">
+            <h1>Header</h1>
+        </div>
+        <div class="item2">Menu
+            <div id="vm">
+                <p>{{ greeting }}</p>
+                <p>[[ greeting ]]</p>
+            </div>
+        </div>
+        <div class="item3">
+
+            <table class="fold-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Pages</th>
+                        <th>Size</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in records %}
+                    <tr class="view">
+                        <td class="c1">{{rec.title}}</td>
+                        <td class="c2">{{rec.page_nos}}</td>
+                        <td class="c3">{{rec.size}}</td>
+                    </tr>
+                    <tr class="fold">
+                        <td colspan="7">
+                            <div class="fold-content">{{rec.toc}}</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <div class="item4"></div>
+        <div class="item5">Footer</div>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const {
+            createApp
+        } = Vue
+
+        createApp({
+            delimiters: ['[[', ']]'],
+            data() {
+                return {
+                    greeting: 'Hello Vue!'
+                }
+            }
+        }).mount('#vm')
+    </script>
+</body>
+
+</html>

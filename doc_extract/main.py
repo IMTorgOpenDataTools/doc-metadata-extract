@@ -19,6 +19,7 @@ from logzero import logger
 from pathlib import Path
 
 from doc_extract.document import Document
+from doc_extract.report import Report
 
 
 
@@ -45,10 +46,19 @@ def modify_and_copy_files(input_dir, files):
         doc.save_modified_file(filepath_modified=output_dir)
         docs.append(doc)
 
-    return docs
+    return output_dir, docs
 
-def create_index_report(input_dir, docs):
-    pass
+def create_index_report(output_dir, docs):
+    template_path = './doc_extract/templates'
+    template = 'index.html'
+    template_data = {'records': docs}
+    output_filepath = output_dir / template
+
+    report = Report(logger, template_path)
+    html = report.create_report(template=template, 
+                                template_args=template_data
+                                )
+    report.save_report(html, filepath=output_filepath)
 
 
 
@@ -58,8 +68,8 @@ def main(args):
     logger.info(args)
 
     input_dir, files = ingest_data(args)
-    docs = modify_and_copy_files(input_dir, files)
-    #create index report
+    output_dir, docs = modify_and_copy_files(input_dir, files)
+    create_index_report(output_dir, docs)
     
             
 

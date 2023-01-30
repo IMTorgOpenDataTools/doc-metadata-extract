@@ -13,10 +13,14 @@ This project extracts metadata from a document to index it for quick review.
 
 ## TODO
 
-* continue with demo/*.pdf
-* add table to index.html [ref](https://codepen.io/jopico/pen/kyRprJ)
+* ~~continue with demo/*.pdf
+* ~~add table to index.html [ref](https://codepen.io/jopico/pen/kyRprJ)
 * finish main.py workflow with index.html
 * deploy to lsf
+
+* it is slow because it uses too many pages
+* rec.name is not available for original name
+* size and other attributes should be added
 
 
 

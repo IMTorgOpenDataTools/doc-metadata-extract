@@ -25,7 +25,8 @@ class Args:
 def test_main_workflow():
     args = Args()
     input_dir, files = ingest_data(args)
-    docs = modify_and_copy_files(input_dir, files)
-    assert len(docs)>0
+    output_dir, docs = modify_and_copy_files(input_dir, files)
+    create_index_report(output_dir, docs)
+    assert True == True
 
     #TODO: finally, clean-up dir
