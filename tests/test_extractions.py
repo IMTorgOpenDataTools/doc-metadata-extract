@@ -8,10 +8,11 @@ __license__ = "MIT"
 
 
 import sys
+from pathlib import Path
 sys.path.append(Path('doc_extract').absolute().as_posix() )
 import doc_extract.extractions as ex
 
-from pathlib import Path
+
 from logzero import logger
 import pytest
 

@@ -87,7 +87,7 @@
         </div>
         <div class="item3">
 
-            <table class="fold-table">
+            <table id="btn" class="fold-table">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -97,16 +97,18 @@
                 </thead>
                 <tbody>
                     {% for rec in records %}
-                    <tr class="view">
-                        <td class="c1">{{rec.title}}</td>
-                        <td class="c2">{{rec.page_nos}}</td>
-                        <td class="c3">{{rec.size}}</td>
-                    </tr>
-                    <tr class="fold">
-                        <td colspan="7">
-                            <div class="fold-content">{{rec.toc}}</div>
-                        </td>
-                    </tr>
+                    <div v-on:click="clickFold">
+                        <tr class="view">
+                            <td class="c1">{{rec.title}}</td>
+                            <td class="c2">{{rec.page_nos}}</td>
+                            <td class="c3">{{rec.size}}</td>
+                        </tr>
+                        <tr class="fold">
+                            <td colspan="7">
+                                <div class="fold-content">{{rec.toc}}</div>
+                            </td>
+                        </tr>
+                    </div>
                     {% endfor %}
                 </tbody>
             </table>
@@ -129,6 +131,16 @@
                 }
             }
         }).mount('#vm')
+    </script>
+
+    <script>
+        createApp({
+            data() {
+                return {
+                    display: 'Hello Vue!'
+                }
+            }
+        }).mount('#btn')
     </script>
 </body>
 

@@ -9,10 +9,10 @@ __license__ = "MIT"
 
 
 import sys
+from pathlib import Path
 sys.path.append(Path('doc_extract').absolute().as_posix() )
 from doc_extract.report import Report
 
-from pathlib import Path
 from logzero import logger
 import pytest
 
@@ -42,6 +42,20 @@ def test_create_table():
           'toc': 'Ipsum lorem dolor sit amet, <br>consectetur adipiscing elit, <br>sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br>Ut enim ad minim veniam, <br>quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <br>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <br>Excepteur sint occaecat cupidatat non proident, <br>sunt in culpa qui officia deserunt mollit anim id est laborum.'
         }
     template_data = {'records':[record1, record2]}
+    filepath = './tests/html/index_out.html'
+
+    report = Report(logger, template_path)
+    html = report.create_report(template=template, 
+                                template_args=template_data
+                                )
+    report.save_report(html, filepath=filepath)
+    assert True == True
+
+
+def test_vue():
+    template_path = './doc_extract/templates'
+    template = 'test.html'
+    template_data = {}
     filepath = './tests/html/index_out.html'
 
     report = Report(logger, template_path)
