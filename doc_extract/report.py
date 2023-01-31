@@ -12,7 +12,7 @@ __license__ = "MIT"
 from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
 
-from doc_extract.utils import record
+from utils import record
 
 
 class Report:

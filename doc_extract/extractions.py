@@ -41,7 +41,7 @@ from pdfminer.pdfdocument import PDFDocument
 import fitz
 
 
-from doc_extract.utils import record
+from utils import record
 
 
 

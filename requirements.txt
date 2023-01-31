@@ -1,0 +1,15 @@
+logzero
+python-docx
+pytest
+beautifulsoup4
+pandas
+openpyxl
+spacy
+jinja2
+pypdf
+pdfminer
+pdftitle
+"pdfminer.six"
+pymupdf
+xhtml2pdf
+

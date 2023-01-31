@@ -14,7 +14,7 @@ nlp = spacy.load("en_core_web_sm")
 from pathlib import Path, PosixPath
 import shutil
 
-from doc_extract import extractions as ex
+import extractions as ex
 
 
 

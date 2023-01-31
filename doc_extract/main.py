@@ -18,8 +18,8 @@ import argparse
 from logzero import logger
 from pathlib import Path
 
-from doc_extract.document import Document
-from doc_extract.report import Report
+from document import Document
+from report import Report
 
 
 

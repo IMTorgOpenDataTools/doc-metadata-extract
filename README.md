@@ -10,18 +10,23 @@ This project extracts metadata from a document to index it for quick review.
 * 
 
 
+## Run
+
+`pipenv run python doc_extract/main.py --input_dir=./tests/demo/`
+
 
 ## TODO
 
 * ~~continue with demo/*.pdf
 * ~~add table to index.html [ref](https://codepen.io/jopico/pen/kyRprJ)
-* finish main.py workflow with index.html
+* ~~finish main.py workflow with index.html
 * deploy to lsf
 
+* input files from directory
 * it is slow because it uses too many pages
 * rec.name is not available for original name
 * size and other attributes should be added
-
+* logs
 
 
 

@@ -7,7 +7,8 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 
-
+import sys
+sys.path.append(Path('doc_extract').absolute().as_posix() )
 import doc_extract.extractions as ex
 
 from pathlib import Path

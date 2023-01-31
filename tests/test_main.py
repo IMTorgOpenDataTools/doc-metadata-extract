@@ -7,8 +7,10 @@ __author__ = "Jason Beach"
 __version__ = "0.1.0"
 __license__ = "MIT"
 
+import sys
 from pathlib import Path
 
+sys.path.append(Path('doc_extract').absolute().as_posix() )
 from doc_extract.main import (
     ingest_data,
     modify_and_copy_files,
