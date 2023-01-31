@@ -134,11 +134,12 @@ class Document:
                     print( ' '.join(title.split(' ')[1:]) )
 
             elif file_or_screen=='file':              
-                print_str_outline = []
+                outline_lst = []
                 for(level,title,dest) in outlines:
-                    item = '<br>'.join(title.split(' ')[1:]) + '<br>'
-                    print_str_outline.append(item)
-                return print_str_outline
+                    item = f'{title}'
+                    outline_lst.append(item)
+                outline_html_str = ('<br>').join(outline_lst)
+                return outline_html_str
 
             else:
                 return 0
