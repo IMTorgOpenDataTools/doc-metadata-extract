@@ -43,7 +43,7 @@
             background-color: rgba(255, 255, 255, 0.8);
             text-align: center;
             padding: 20px 0;
-            font-size: 30px;
+            font-size: 20px;
         }
         
         table {
@@ -59,15 +59,19 @@
             padding: 8px;
         }
         
-        tr:nth-child(even) {
+        tr.child>td {
+            border: 0;
+        }
+        
+        tr:nth-child(4n-1) {
             background-color: #dddddd;
         }
         
-        tr.open {
+        tr+tr.child {
             display: inline;
         }
         
-        tr.fold {
+        tr.fold+tr.child {
             display: none;
         }
     </style>
@@ -85,9 +89,9 @@
                 <p>[[ greeting ]]</p>
             </div>
         </div>
-        <div class="item3">
 
-            <table id="btn" class="fold-table">
+        <div class="item3">
+            <table id="btn">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -97,24 +101,22 @@
                 </thead>
                 <tbody>
                     {% for rec in records %}
-                    <div v-on:click="clickFold">
-                        <tr class="view">
-                            <td class="c1">{{rec.title}}</td>
-                            <td class="c2">{{rec.page_nos}}</td>
-                            <td class="c3">{{rec.size}}</td>
-                        </tr>
-                        <tr class="fold">
-                            <td colspan="7">
-                                <div class="fold-content">{{rec.toc}}</div>
-                            </td>
-                        </tr>
-                    </div>
+                    <tr class="fold" @click="e => e.currentTarget.classList.toggle('fold')">
+                        <td>{{rec.title}}</td>
+                        <td>{{rec.page_nos}}</td>
+                        <td>{{rec.size}}</td>
+                    </tr>
+                    <tr class="child">
+                        <td>
+                            <p>{{rec.toc}}</p>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
-
         </div>
-        <div class="item4"></div>
+
+        <div class="item4">Margin</div>
         <div class="item5">Footer</div>
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
