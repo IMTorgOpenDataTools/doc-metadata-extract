@@ -96,7 +96,8 @@
                     <tr>
                         <th>Title</th>
                         <th>Pages</th>
-                        <th>Size</th>
+                        <th>Sentences</th>
+                        <th>Size (MB)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,11 +105,12 @@
                     <tr class="fold" @click="e => e.currentTarget.classList.toggle('fold')">
                         <td>{{rec.title}}</td>
                         <td>{{rec.page_nos}}</td>
-                        <td>{{rec.size}}</td>
+                        <td>{{rec.length_lines}}</td>
+                        <td>{{rec.file_size_mb}}</td>
                     </tr>
                     <tr class="child">
                         <td>
-                            <p>{{rec.toc}}</p>
+                            <p>{{rec.pp_toc}}</p>
                         </td>
                     </tr>
                     {% endfor %}

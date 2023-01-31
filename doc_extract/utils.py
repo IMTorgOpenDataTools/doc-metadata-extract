@@ -8,6 +8,9 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 
+
+MAX_PAGE_EXTRACT = 5
+
 record = {'title': None,
           'page_nos': None,
           'length_lines': None,
@@ -15,4 +18,4 @@ record = {'title': None,
           'text': None
         }
 
-"""add keys: author, tag_categories, toc_chapter_headers, summary"""
+"""TODO add keys: author, tag_categories, toc_chapter_headers, summary"""

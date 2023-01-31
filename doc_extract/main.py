@@ -27,7 +27,7 @@ def ingest_data(args):
     input_dir = Path(args.input_dir)
     files = [x for x in input_dir.glob('**/*') if x.is_file()]
     if not input_dir.is_dir() or len(files)==0:
-        logger.info("fail")
+        logger.info(f"fail: {input_dir} not a directory, or it is empty of files")
         raise TypeError
     return input_dir, files
 
@@ -35,7 +35,7 @@ def modify_and_copy_files(input_dir, files):
     root_dir = input_dir.parent
     output_dir = root_dir / Path( input_dir.name.__str__() + '_mod' )
     if output_dir.is_dir():
-        logger.info("fail")
+        logger.info(f"fail: {output_dir} already exists")
         raise TypeError
     else:
         output_dir.mkdir(parents=True, exist_ok=False)
@@ -64,12 +64,13 @@ def create_index_report(output_dir, docs):
 
 def main(args):
     """ Main entry point of the app """
-    logger.info("hello world")
-    logger.info(args)
-
+    logger.info(f'process initiated with arguments: {args}')
     input_dir, files = ingest_data(args)
+    logger.info(f'data ingested from input directory: {input_dir}')
     output_dir, docs = modify_and_copy_files(input_dir, files)
+    logger.info(f'data ingested from input directory: {output_dir}')
     create_index_report(output_dir, docs)
+    logger.info(f'index report created')
     
             
 
@@ -111,3 +112,4 @@ if __name__ == "__main__":
     """
     args = parser.parse_args()
     main(args)
+    logger.info(f'process completed')

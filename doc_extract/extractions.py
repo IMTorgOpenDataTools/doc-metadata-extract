@@ -41,7 +41,7 @@ from pdfminer.pdfdocument import PDFDocument
 import fitz
 
 
-from utils import record
+from utils import record, MAX_PAGE_EXTRACT
 
 
 
@@ -210,18 +210,23 @@ def extract_pdf(self, logger):
                     pass
         return outlines
 
-
     title = None
     try:
         title = pdftitle.get_title_from_file(self.filepath.__str__())
     except Exception:
         logger.info("`pdftitle` module threw error")
         pass
-    raw_text = pdf_extract_text(self.filepath.__str__())
-    excerpts = clean_text(raw_text)
-    pages_gen = pdf_extract_pages(self.filepath.__str__())
-    page_nos = sum(1 for x in pages_gen)
 
+    #process raw data
+    pages_generator = pdf_extract_pages(self.filepath.__str__())
+    page_nos = sum(1 for x in pages_generator)
+    number_of_pages_to_extract_text = page_nos if page_nos <= 5 else MAX_PAGE_EXTRACT
+    raw_text = pdf_extract_text(pdf_file = self.filepath.__str__(),
+                                maxpages = number_of_pages_to_extract_text
+                                )
+    excerpts = clean_text(raw_text)
+
+    #create record
     record['title'] = get_title(title)
     record['page_nos'] = page_nos
     record['toc'] = get_toc()

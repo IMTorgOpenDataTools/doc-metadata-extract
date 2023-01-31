@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 sys.path.append(Path('doc_extract').absolute().as_posix() )
 from doc_extract.report import Report
+from doc_extract.utils import record
 
 from logzero import logger
 import pytest
