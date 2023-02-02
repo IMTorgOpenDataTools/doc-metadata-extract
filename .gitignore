@@ -1,6 +1,8 @@
 # Macbook
 .DS_Store
 .libs
+logs/
+tests/demo_mod/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

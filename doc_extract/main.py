@@ -15,11 +15,21 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 import argparse
+import logzero
 from logzero import logger
 from pathlib import Path
 
 from document import Document
 from report import Report
+
+
+logging_dir = './logs/process.log'
+# logging
+logzero.loglevel(logzero.INFO)                                           #set a minimum log level: debug, info, warning, error
+logzero.logfile(logging_dir, maxBytes=1000000, backupCount=3)            #set rotating log file
+logger.info('logger created, constants initialized')
+
+
 
 
 

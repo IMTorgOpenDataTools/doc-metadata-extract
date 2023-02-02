@@ -12,7 +12,7 @@ This project extracts metadata from a document to index it for quick review.
 
 ## Run
 
-`pipenv run python doc_extract/main.py --input_dir=./tests/demo/`
+`pipenv run python doc_extract/main.py ./tests/demo/`
 
 
 ## TODO
