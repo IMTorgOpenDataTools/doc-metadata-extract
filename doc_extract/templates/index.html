@@ -43,7 +43,7 @@
             background-color: rgba(255, 255, 255, 0.8);
             text-align: center;
             padding: 20px 0;
-            font-size: 20px;
+            font-size: 18px;
         }
         
         table {
@@ -52,9 +52,18 @@
             width: 100%;
         }
         
-        td,
+        td.small {
+            font-size: 12px;
+        }
+        
         th {
-            border: 1px solid #dddddd;
+            border: 1px solid #c2ccd9;
+            text-align: center;
+            padding: 8px;
+        }
+        
+        td {
+            border: 1px solid #c2ccd9;
             text-align: left;
             padding: 8px;
         }
@@ -64,7 +73,7 @@
         }
         
         tr:nth-child(4n-1) {
-            background-color: #dddddd;
+            background-color: #bbcee7;
         }
         
         tr+tr.child {
@@ -81,12 +90,11 @@
 
     <div class="grid-container">
         <div class="item1">
-            <h1>Header</h1>
+            <h1>Document Index</h1>
         </div>
-        <div class="item2">Menu
+        <div class="item2">
             <div id="vm">
-                <p>{{ greeting }}</p>
-                <p>[[ greeting ]]</p>
+                <!--<p>[[ greeting ]]</p>-->
             </div>
         </div>
 
@@ -111,11 +119,11 @@
                         <td>{{rec.page_nos}}</td>
                         <td>{{rec.length_lines}}</td>
                         <td>{{rec.file_size_mb}}</td>
-                        <td>{{rec.author}}, {{rec.subject}}, {{rec.keywords}}</td>
+                        <td class="small">Author: {{rec.author}}<br> Subject: {{rec.subject}}<br> Keywords: {{rec.keywords}}</td>
                         <td>{{rec.date}}</td>
                     </tr>
                     <tr class="child">
-                        <td>
+                        <td class="small">
                             <p>{{rec.pp_toc}}</p>
                         </td>
                     </tr>
@@ -124,8 +132,8 @@
             </table>
         </div>
 
-        <div class="item4">Margin</div>
-        <div class="item5">Footer</div>
+        <div class="item4"></div>
+        <div class="item5"></div>
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
