@@ -10,16 +10,23 @@ __license__ = "MIT"
 
 import signal
 
-MAX_PAGE_EXTRACT = 5
+MAX_PAGE_EXTRACT = None
 
 record = {'title': None,
+          'author': None,
+          'subject': None,
+          'keywords': None,
+          'date': None,
+
           'page_nos': None,
           'length_lines': None,
           'toc': None,
           'text': None
         }
 
-"""TODO add keys: author, tag_categories, toc_chapter_headers, summary"""
+"""TODO add keys: author, tag_categories, summary
+Keys are format, encryption, title, author, subject, keywords, (creator, producer=>author), creationDate, modDate, trapped.
+"""
 
 
 

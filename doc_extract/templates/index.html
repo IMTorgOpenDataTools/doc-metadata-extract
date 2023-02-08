@@ -95,18 +95,24 @@
                 <thead>
                     <tr>
                         <th>Title</th>
+                        <th>Original File Name</th>
                         <th>Pages</th>
                         <th>Sentences</th>
                         <th>Size (MB)</th>
+                        <th>Metadata</th>
+                        <th>Date Created</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for rec in records %}
                     <tr class="fold" @click="e => e.currentTarget.classList.toggle('fold')">
-                        <td>{{rec.title}}</td>
+                        <td>{{rec.filename_modified}}</td>
+                        <td>{{rec.filename_original}}</td>
                         <td>{{rec.page_nos}}</td>
                         <td>{{rec.length_lines}}</td>
                         <td>{{rec.file_size_mb}}</td>
+                        <td>{{rec.author}}, {{rec.subject}}, {{rec.keywords}}</td>
+                        <td>{{rec.date}}</td>
                     </tr>
                     <tr class="child">
                         <td>

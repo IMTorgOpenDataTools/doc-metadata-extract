@@ -20,7 +20,7 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 
-
+import datetime
 import pandas as pd
 
 #docx
@@ -62,6 +62,7 @@ def clean_text(txt):
         return combined_txt.replace('.','.  ').replace('\n',' ')
     elif type(txt) is str:
         txts = txt.split('.\n')
+        #TODO:if the len(item)<50, then append to the earlier item
         txts = [txt.replace('-\n','').replace('\n',' ') for txt in txts]
         return txts
     else:
@@ -139,6 +140,11 @@ def extract_docx(self, logger):
 
 def extract_html_original(self, logger):
     """Extract for html filetype.
+
+    Use the optimal module, first, this is typically 
+    PyMuPDF(fitz) for speed of extraction.  Then 
+    try pdfminer.six, which is more accurate,  if any 
+    errors occur.
     
     'text': visible text
     """
@@ -211,10 +217,21 @@ def extract_pdf(self, logger):
                         pass
         return title
 
-    def get_toc():
+    def get_metadata(self):
+        author = None
+        with fitz.open(self.filepath.__str__()) as doc:
+            tmp = doc.metadata
+        result = {'author': tmp['author'], 
+                  'subject': tmp['subject'], 
+                  'keywords': tmp['keywords'], 
+                  'date': datetime.datetime.strptime(tmp['creationDate'].split('D:')[1][:8], "%Y%m%d").date()
+                  }
+        return result
+
+    def get_toc(self):
         outlines = None
-        doc = fitz.open(self.filepath.__str__())
-        tmp = doc.get_toc()
+        with fitz.open(self.filepath.__str__()) as doc:
+            tmp = doc.get_toc()
         outlines = tmp if tmp != [] else None
         if not outlines:
             with open(self.filepath.__str__(), 'rb') as fp:
@@ -228,19 +245,19 @@ def extract_pdf(self, logger):
 
     def get_raw_text(self, number_of_pages_to_extract_text):
         """Get raw text from pdf.
-        
-        Using PyMuPDF(fitz) for speed of extraction, then 
-        trying pdfminer.six, which is more accurate.
 
         Ensure only a limited number of pages are extracted.
         """
-        MAX_TIME_SEC = 3
+        MAX_TIME_SEC = 10
         raw_text = ''
 
         try:
             with fitz.open(self.filepath.__str__() ) as doc:
-                for page in doc[number_of_pages_to_extract_text]:
-                    raw_text+= page.get_text()
+                pg_idx = 0
+                for page in doc:
+                    if pg_idx <= number_of_pages_to_extract_text:
+                        raw_text += page.get_text()
+                        pg_idx += 1
         except Exception:
             pass    
 
@@ -261,24 +278,26 @@ def extract_pdf(self, logger):
 
 
     #process raw data
+    metadata_results = get_metadata(self)
     with fitz.open(self.filepath.__str__() ) as doc:
-        page_count = len(doc)    #TODO: get page count without loading file
-
-    #with open(self.filepath.__str__(), 'rb') as file:
-    #    parser = PDFParser(file)
-    #    document = PDFDocument(parser)
-    #    page_count = resolve1(document.catalog['Pages'])['Count']
-
-    #pages_generator = pdf_extract_pages(self.filepath.__str__())
-    #page_count = sum(1 for x in pages_generator)
-    number_of_pages_to_extract_text = page_count if page_count <= 5 else MAX_PAGE_EXTRACT
+        page_count = len(doc)
+    page_list_length = page_count - 1
+    if MAX_PAGE_EXTRACT: 
+        number_of_pages_to_extract_text = page_list_length if page_list_length <= MAX_PAGE_EXTRACT else MAX_PAGE_EXTRACT
+    else:
+        number_of_pages_to_extract_text = page_list_length
     raw_text = get_raw_text(self, number_of_pages_to_extract_text)
     excerpts = clean_text(raw_text)
 
     #create record
     record['title'] = get_title(self)
+    record['author'] = metadata_results['author']
+    record['subject'] = metadata_results['subject']
+    record['keywords'] = metadata_results['keywords']
+    record['date'] = metadata_results['date']
+
     record['page_nos'] = page_count
-    record['toc'] = get_toc()
+    record['toc'] = get_toc(self)
     record['text'] = excerpts
 
     return record

@@ -7,6 +7,7 @@ __author__ = "Jason Beach"
 __version__ = "0.1.0"
 __license__ = "MIT"
 
+import time
 import sys
 from pathlib import Path
 
@@ -25,10 +26,13 @@ class Args:
 
 
 def test_main_workflow():
+    start_tm = time.time()
     args = Args()
     input_dir, files = ingest_data(args)
     output_dir, docs = modify_and_copy_files(input_dir, files)
     create_index_report(output_dir, docs)
+    final_tm = time.time() - start_tm 
+    print(f'Final time is {final_tm} sec')
     assert True == True
 
     #TODO: finally, clean-up dir

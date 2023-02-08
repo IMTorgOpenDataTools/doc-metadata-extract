@@ -24,11 +24,10 @@ Add the event file path to the `doc_extract/main.py:trigger_file`
 * ~~add table to index.html [ref](https://codepen.io/jopico/pen/kyRprJ)
 * ~~finish main.py workflow with index.html
 * ~~deploy to lsf
-
 * ~~input files from directory
 * ~~it is slow because it uses too many pages
-* make faster
-* rec.name is not available for original name
+* ~~make faster
+* ~~rec.name is not available for original name
 * ~~size and other attributes should be added
 * logs
 

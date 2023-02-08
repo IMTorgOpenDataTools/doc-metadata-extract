@@ -44,14 +44,14 @@ def test_extract_html():
 
 def test_extract_pdf():
     start_tm = time.time()
-    #filepath_str = 'tests/demo/cs_nlp_2301.09640.pdf'    #3.3sec
-    filepath_str = 'tests/demo/nuclear_2201.00276.pdf'    #3.8sec
+    filepath_str = 'tests/demo/cs_nlp_2301.09640.pdf'    #3.3sec, 21sec, 0.65sec
+    #filepath_str = 'tests/demo/nuclear_2201.00276.pdf'    #3.8sec, 1.35sec
     class Tmp:
         filepath = Path(filepath_str)
     obj = Tmp()
     record = ex.extract_pdf(obj, logger)
     final_tm = time.time() - start_tm 
     print(f'Final time is {final_tm} sec')
-    assert True == True
-    #assert record['title'] == 'Weakly-Supervised Questions for Zero-Shot Relation Extraction'
-    #assert record['page_nos'] == 12
+    #assert True == True
+    assert record['title'] == 'Weakly-Supervised Questions for Zero-Shot Relation Extraction'
+    assert record['page_nos'] == 12
