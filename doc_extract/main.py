@@ -14,6 +14,7 @@ __author__ = "Jason Beach"
 __version__ = "0.1.0"
 __license__ = "MIT"
 
+import time
 import argparse
 import logzero
 from logzero import logger
@@ -32,6 +33,10 @@ logger.info('logger created, constants initialized')
 
 
 
+def remove_trigger_file(file_path):
+    trigger_file = file_path
+    trigger_path = Path(trigger_file)
+    trigger_path.unlink()
 
 def ingest_data(args):
     input_dir = Path(args.input_dir)
@@ -52,7 +57,10 @@ def modify_and_copy_files(input_dir, files):
 
     docs = []
     for file in files:
+        start_tm = time.time()
         doc = Document(logger, file)
+        end_tm = time.time()
+        logger.info(f'Document {file} created in: {end_tm-start_tm}sec')
         doc.save_modified_file(filepath_modified=output_dir)
         docs.append(doc)
 
@@ -75,6 +83,8 @@ def create_index_report(output_dir, docs):
 def main(args):
     """ Main entry point of the app """
     logger.info(f'process initiated with arguments: {args}')
+    if args.trigger_file:
+        remove_trigger_file(args.trigger_file) 
     input_dir, files = ingest_data(args)
     logger.info(f'data ingested from input directory: {input_dir}')
     output_dir, docs = modify_and_copy_files(input_dir, files)
@@ -99,27 +109,15 @@ if __name__ == "__main__":
     # Required positional argument
     parser.add_argument("input_dir", help="Input directory containing files")
 
-    """
     # Optional argument flag which defaults to False
-    parser.add_argument("-f", "--flag", action="store_true", default=False)
-
-    # Optional argument which requires a parameter (eg. -d test)
-    parser.add_argument("-n", "--name", action="store", dest="name")
-
-    # Optional verbosity counter (eg. -v, -vv, -vvv, etc.)
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="count",
-        default=0,
-        help="Verbosity (-v, -vv, etc)")
+    parser.add_argument("-tf", "--trigger_file", default=False, help="File used to trigger even")
 
     # Specify output of "--version"
     parser.add_argument(
         "--version",
         action="version",
         version="%(prog)s (version {version})".format(version=__version__))
-    """
+
     args = parser.parse_args()
     main(args)
     logger.info(f'process completed')

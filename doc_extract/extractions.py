@@ -38,10 +38,17 @@ from pdfminer.high_level import extract_text as pdf_extract_text                
 from pdfminer.high_level import extract_pages as pdf_extract_pages
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
-import fitz
+from pdfminer.pdfinterp import resolve1
+import fitz    
+#PyMuPDF is faster than pdfminer, but not as accurate, [ref](https://medium.com/social-impact-analytics/comparing-4-methods-for-pdf-text-extraction-in-python-fd34531034f)
+#TODO:PyMuPDF is similar to pikepdf but test for performance
 
 
-from utils import record, MAX_PAGE_EXTRACT
+from utils import (
+    record, 
+    MAX_PAGE_EXTRACT, 
+    timeout
+)
 
 
 
@@ -182,17 +189,26 @@ def extract_pdf(self, logger):
     
     'text': pages
     """
-    def get_title(title):
+    def get_title(self):
+        title = None
+        try:
+            with timeout(seconds=5):
+                title = pdftitle.get_title_from_file(self.filepath.__str__())
+        except Exception:
+            logger.info("`pdftitle` module threw error")
+            pass
+
         if not title:
-            with open(self.filepath.__str__(), 'rb') as f:
-                pdfReader = pypdf.PdfReader(f)
-                first_str = len(excerpts[0])
-                if pdfReader.metadata['/Title']:
-                    title = pdfReader.metadata['/Title']
-                elif first_str>0 and first_str<100:
-                    title = first_str
-                else:
-                    pass
+            with timeout(seconds=5):
+                with open(self.filepath.__str__(), 'rb') as f:
+                    pdfReader = pypdf.PdfReader(f)
+                    first_str = len(excerpts[0])
+                    if pdfReader.metadata['/Title']:
+                        title = pdfReader.metadata['/Title']
+                    elif first_str>0 and first_str<100:
+                        title = first_str
+                    else:
+                        pass
         return title
 
     def get_toc():
@@ -210,25 +226,58 @@ def extract_pdf(self, logger):
                     pass
         return outlines
 
-    title = None
-    try:
-        title = pdftitle.get_title_from_file(self.filepath.__str__())
-    except Exception:
-        logger.info("`pdftitle` module threw error")
-        pass
+    def get_raw_text(self, number_of_pages_to_extract_text):
+        """Get raw text from pdf.
+        
+        Using PyMuPDF(fitz) for speed of extraction, then 
+        trying pdfminer.six, which is more accurate.
+
+        Ensure only a limited number of pages are extracted.
+        """
+        MAX_TIME_SEC = 3
+        raw_text = ''
+
+        try:
+            with fitz.open(self.filepath.__str__() ) as doc:
+                for page in doc[number_of_pages_to_extract_text]:
+                    raw_text+= page.get_text()
+        except Exception:
+            pass    
+
+        if raw_text == '':
+            try:
+                with timeout(seconds=MAX_TIME_SEC):
+                    raw_text = pdf_extract_text(pdf_file = self.filepath.__str__(),
+                                                maxpages = number_of_pages_to_extract_text
+                                                )
+            except Exception:
+                logger.info(f'{self.filepath.__str__()} took more than {MAX_TIME_SEC}sec to extract text')
+
+            if not raw_text=='':
+                raw_text = pdf_extract_text(pdf_file = self.filepath.__str__(),
+                                            maxpages = 1
+                                            )
+        return raw_text        
+
 
     #process raw data
-    pages_generator = pdf_extract_pages(self.filepath.__str__())
-    page_nos = sum(1 for x in pages_generator)
-    number_of_pages_to_extract_text = page_nos if page_nos <= 5 else MAX_PAGE_EXTRACT
-    raw_text = pdf_extract_text(pdf_file = self.filepath.__str__(),
-                                maxpages = number_of_pages_to_extract_text
-                                )
+    with fitz.open(self.filepath.__str__() ) as doc:
+        page_count = len(doc)    #TODO: get page count without loading file
+
+    #with open(self.filepath.__str__(), 'rb') as file:
+    #    parser = PDFParser(file)
+    #    document = PDFDocument(parser)
+    #    page_count = resolve1(document.catalog['Pages'])['Count']
+
+    #pages_generator = pdf_extract_pages(self.filepath.__str__())
+    #page_count = sum(1 for x in pages_generator)
+    number_of_pages_to_extract_text = page_count if page_count <= 5 else MAX_PAGE_EXTRACT
+    raw_text = get_raw_text(self, number_of_pages_to_extract_text)
     excerpts = clean_text(raw_text)
 
     #create record
-    record['title'] = get_title(title)
-    record['page_nos'] = page_nos
+    record['title'] = get_title(self)
+    record['page_nos'] = page_count
     record['toc'] = get_toc()
     record['text'] = excerpts
 

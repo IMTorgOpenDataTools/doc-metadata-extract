@@ -12,7 +12,10 @@ This project extracts metadata from a document to index it for quick review.
 
 ## Run
 
-`pipenv run python doc_extract/main.py ./tests/demo/`
+Add the event file path to the `doc_extract/main.py:trigger_file`
+
+`pipenv run python doc_extract/main.py ./tests/demo/ -tf ./tests/RUN.txt`
+
 
 
 ## TODO
@@ -20,12 +23,13 @@ This project extracts metadata from a document to index it for quick review.
 * ~~continue with demo/*.pdf
 * ~~add table to index.html [ref](https://codepen.io/jopico/pen/kyRprJ)
 * ~~finish main.py workflow with index.html
-* deploy to lsf
+* ~~deploy to lsf
 
-* input files from directory
-* it is slow because it uses too many pages
+* ~~input files from directory
+* ~~it is slow because it uses too many pages
+* make faster
 * rec.name is not available for original name
-* size and other attributes should be added
+* ~~size and other attributes should be added
 * logs
 
 
