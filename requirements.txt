@@ -12,4 +12,3 @@ pdftitle
 "pdfminer.six"
 pymupdf
 xhtml2pdf
-

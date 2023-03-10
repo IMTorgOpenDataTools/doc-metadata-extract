@@ -1,13 +1,21 @@
 # Document Metadata Extract
 
-This project extracts metadata from a document to index it for quick review.
+This project extracts metadata from files within a directory and returns an interactive html index describing the files.
 
 
-## Graphical Depict Text
+## Data and Representation
+
+Collected file metadata include:
+
+* individual file, raw data: title, authors, toc, size, sentences
+* individual file, aggregated data: topics, key words / phrases
+* collective directory, comparison data: similarity with others, N-topics and relevance to each topic, ...
+
+Data can graphically displayed:
 
 * what manageble number (3-6) of topics are overlapping across sources?  => topic modeling
 * how can each source be located with respect to each topic?  => network attraction graph
-* 
+* ...
 
 
 ## Run
