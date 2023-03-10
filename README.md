@@ -8,7 +8,7 @@ This project extracts metadata from files within a directory and returns an inte
 Collected file metadata include:
 
 * individual file, raw data: title, authors, toc, size, sentences
-* individual file, aggregated data: topics, key words / phrases
+* individual file, aggregated data: topics, key words / phrases, internal wordnet
 * collective directory, comparison data: similarity with others, N-topics and relevance to each topic, ...
 
 Data can graphically displayed:
@@ -18,16 +18,20 @@ Data can graphically displayed:
 * ...
 
 
+
 ## Run
 
-Add the event file path to the `doc_extract/main.py:trigger_file`
+This can be run using multiple methods
 
-`pipenv run python doc_extract/main.py ./tests/demo/ -tf ./tests/RUN.txt`
-
+* commandline: `python3 -m doc_extract --input_dir ./tests/demo/ --output_dir ./tests/demo_mod/ --output_format html`
+* docker: `TODO >>> python3 docker_run.py tests/resources/blog_test-hugo_blog.ipynb  ./ `
+* aws lambda container: ``
+* development: `pipenv run python doc_extract/main.py ./tests/demo/ -tf ./tests/RUN.txt --output html`
 
 
 ## TODO
 
+_workflow_
 * ~~continue with demo/*.pdf
 * ~~add table to index.html [ref](https://codepen.io/jopico/pen/kyRprJ)
 * ~~finish main.py workflow with index.html
@@ -37,7 +41,14 @@ Add the event file path to the `doc_extract/main.py:trigger_file`
 * ~~make faster
 * ~~rec.name is not available for original name
 * ~~size and other attributes should be added
+
+_commandline_
 * logs
+* explore indv aggregated data
+* move triggerfile to external
+* add arguments
+* add outputs
+* run via cmdln as module
 
 
 
