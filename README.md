@@ -1,9 +1,19 @@
 # Document Metadata Extract
 
-This project extracts metadata from files within a directory and returns an interactive html index describing the files.
+This project extracts metadata from files within a directory and returns a single, interactive html index of file descriptions.  Rather than opening and reviewing files, individually, the interactive index is intended to be a portable, single-source of reference for the documents.
+
+This is useful when performing manual information extraction with large numbers of documents.
+
+![Information Extraction Framework](./docs/IE_framework.jpg)
 
 
 ## Data and Representation
+
+File formats available for data extraction:
+
+* pdf
+* pdf of images (typically ppt)
+* TODO: docx, xlsx, ppt, ...
 
 Collected file metadata include:
 
@@ -31,6 +41,8 @@ This can be run using multiple methods
 
 ## TODO
 
+### Requirements
+
 _workflow_
 * ~~continue with demo/*.pdf
 * ~~add table to index.html [ref](https://codepen.io/jopico/pen/kyRprJ)
@@ -41,6 +53,10 @@ _workflow_
 * ~~make faster
 * ~~rec.name is not available for original name
 * ~~size and other attributes should be added
+* build lunr index and add full text
+* ocr docs of images, such as ppt slides
+* extract unique file key (if available)
+* extract folder structure
 
 _commandline_
 * logs
@@ -50,12 +66,18 @@ _commandline_
 * add outputs
 * run via cmdln as module
 
+_frontend_
+* search 
+  - lunr index
+  - highlight specific text
+* sort by folder structure and key words columns
+* export selected references to xlsx
 
 
 
-### docx to pdf
+### Word files
 
-There are different options:
+For docx-to-pdf there are different options:
 
 * libreoffice: `cd /DIRECTORY/WITH/FILE/IN && libreoffice --headless --convert-to html 'FILE.docx' && pandoc 'FILE.html' -o 'FILE.pdf'`, [ref](https://unix.stackexchange.com/questions/105584/convert-a-docx-to-a-pdf-with-pandoc)
 * pandoc: `pandoc --from docx --to latex` then compile latex to pdf, [ref](https://pandoc.org/try/)
