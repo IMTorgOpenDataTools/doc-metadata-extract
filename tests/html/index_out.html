@@ -27,6 +27,22 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
             grid-area: header;
         }
         
+        .item11 {
+            grid-area: placeholder_left;
+        }
+        
+        .item12 {
+            grid-area: search;
+        }
+        
+        .item13 {
+            grid-area: placeholder_right;
+        }
+        
+        .item14 {
+            grid-area: results;
+        }
+        
         .item2 {
             grid-area: menu;
         }
@@ -45,7 +61,7 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
         
         .grid-container {
             display: grid;
-            grid-template-areas: 'header header header header header header' 'menu main main main right right' 'menu footer footer footer footer footer';
+            grid-template-areas: 'header header header header header header header header' 'placeholder_left placeholder_left search search search placeholder_right placeholder_right placeholder_right' 'placeholder_left placeholder_left results results results results results results' 'menu main main main main main right right' 'menu footer footer footer footer footer footer footer';
             gap: 10px;
             background-color: #eff4f8;
             padding: 10px;
@@ -54,8 +70,29 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
         .grid-container>div {
             background-color: rgba(255, 255, 255, 0.8);
             text-align: center;
-            padding: 20px 0;
+            /*padding: 20px 0;*/
             font-size: 18px;
+        }
+        
+        .grid-container>div.search {
+            text-align: right;
+            font-size: 12px;
+            margin-top: -7px;
+        }
+        
+        .grid-container>div.search_box {
+            padding-left: 10px;
+            text-align: left;
+            font-size: 12px;
+        }
+        
+        .grid-container>div.search_box>input {
+            line-height: 100%;
+        }
+        
+        .grid-container>div.results {
+            text-align: left;
+            white-space: pre-line;
         }
         
         table {
@@ -104,6 +141,25 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
         <div class="item1">
             <h1>Document Index</h1>
         </div>
+
+        <div class="item11 search">
+            <h3>Search: </h3>
+        </div>
+
+        <div class="item12 search_box">
+            <input type="text" class="form-control" id="search-field" oninput="search()" placeholder="type search text here..." />
+            <!--
+            <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="search-button">Search</button>
+            -->
+            </span>
+        </div>
+
+        <div class="item14 results" id="results">
+            results go here...
+        </div>
+
+
         <div class="item2">
             <div id="vm">
                 <!--<p>[[ greeting ]]</p>-->
@@ -188,12 +244,94 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
         }).mount('#btn')
     </script>
 
+
     <script>
-        data = '{"fieldVectors": [["title/1", [0, 0.182, 1, 0.182, 2, 0.693]], ["text/1", [3, 0.649, 4, 0.171, 5, 0.649, 6, 0.649, 7, 0.649, 8, 0.171, 9, 0.649]], ["title/2", [0, 0.182, 1, 0.182, 10, 0.693]], ["text/2", [4, 0.196, 8, 0.196, 11, 0.744, 12, 0.744, 13, 0.744]]], "fields": ["title", "text"], "invertedIndex": [["1", {"_index": 2, "text": {}, "title": {"1": {}}}], ["2", {"_index": 10, "text": {}, "title": {"2": {}}}], ["candlestick", {"_index": 9, "text": {"1": {}}, "title": {}}], ["colonel", {"_index": 6, "text": {"1": {}}, "title": {}}], ["document", {"_index": 0, "text": {}, "title": {"1": {}, "2": {}}}], ["green", {"_index": 4, "text": {"1": {}, "2": {}}, "title": {}}], ["kill", {"_index": 5, "text": {"1": {}}, "title": {}}], ["mr", {"_index": 3, "text": {"1": {}}, "title": {}}], ["mustard", {"_index": 7, "text": {"1": {}}, "title": {}}], ["plant", {"_index": 13, "text": {"2": {}}, "title": {}}], ["plumb", {"_index": 12, "text": {"2": {}}, "title": {}}], ["professor", {"_index": 11, "text": {"2": {}}, "title": {}}], ["studi", {"_index": 8, "text": {"1": {}, "2": {}}, "title": {}}], ["titl", {"_index": 1, "text": {}, "title": {"1": {}, "2": {}}}]], "pipeline": ["stemmer"], "version": "2.3.9"}'
-        var idx = lunr.Index.load(JSON.parse(data))
+        function myFunction() {
+            let text = document.getElementById("search-field").value;
+            document.getElementById("results").innerHTML = "You wrote: " + text;
+        }
+
+        //if ((true)) {
+        records = '[{"id": 1, "page_nos": 100, "size": "30KB", "text": "Mr. Green killed Colonel Mustard in the study with the green candlestick.", "title": "Document Title 1", "toc": "Lorem ipsum dolor sit amet, \u003cbr\u003econsectetur adipiscing elit, \u003cbr\u003esed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \u003cbr\u003eUt enim ad minim veniam, \u003cbr\u003equis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \u003cbr\u003eDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \u003cbr\u003eExcepteur sint occaecat cupidatat non proident, \u003cbr\u003esunt in culpa qui officia deserunt mollit anim id est laborum."}, {"id": 2, "page_nos": 200, "size": "2MB", "text": "Professor Plumb has a green plant in his study", "title": "Document Title 2", "toc": "Ipsum lorem dolor sit amet, \u003cbr\u003econsectetur adipiscing elit, \u003cbr\u003esed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \u003cbr\u003eUt enim ad minim veniam, \u003cbr\u003equis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \u003cbr\u003eDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \u003cbr\u003eExcepteur sint occaecat cupidatat non proident, \u003cbr\u003esunt in culpa qui officia deserunt mollit anim id est laborum."}]'
+        data = '{"fieldVectors": [["title/1", [0, 0.182, 1, 0.182, 2, 0.693]], ["text/1", [3, 0.633, 4, 0.235, 5, 0.633, 6, 0.633, 7, 0.633, 8, 0.167, 9, 0.633]], ["title/2", [0, 0.182, 1, 0.182, 10, 0.693]], ["text/2", [4, 0.201, 8, 0.201, 11, 0.765, 12, 0.765, 13, 0.765]]], "fields": ["title", "text"], "invertedIndex": [["1", {"_index": 2, "text": {}, "title": {"1": {}}}], ["2", {"_index": 10, "text": {}, "title": {"2": {}}}], ["candlestick", {"_index": 9, "text": {"1": {}}, "title": {}}], ["colonel", {"_index": 6, "text": {"1": {}}, "title": {}}], ["document", {"_index": 0, "text": {}, "title": {"1": {}, "2": {}}}], ["green", {"_index": 4, "text": {"1": {}, "2": {}}, "title": {}}], ["kill", {"_index": 5, "text": {"1": {}}, "title": {}}], ["mr", {"_index": 3, "text": {"1": {}}, "title": {}}], ["mustard", {"_index": 7, "text": {"1": {}}, "title": {}}], ["plant", {"_index": 13, "text": {"2": {}}, "title": {}}], ["plumb", {"_index": 12, "text": {"2": {}}, "title": {}}], ["professor", {"_index": 11, "text": {"2": {}}, "title": {}}], ["studi", {"_index": 8, "text": {"1": {}, "2": {}}, "title": {}}], ["titl", {"_index": 1, "text": {}, "title": {"1": {}, "2": {}}}]], "pipeline": ["stemmer"], "version": "2.3.9"}'
+        var Files = JSON.parse(records)
+        var lunrIndex = lunr.Index.load(JSON.parse(data))
+
+        /*
+        Once we have the response we are initializing lunr. The fields that we pass into lunr 
+        must match the fields present in the JSON file. Then we loop through the JSON array and 
+        add each object into lunr.
+            
+        document.getElementById("search-button").onclick = function() {
+            search();
+        };
+        */
+
+
+        /*
+        Onclick handler for search button
+        When we call search, we will call the search function on lunr with the parameters from 
+        the input. Lunr is going to return an array containing a score and URL. We are using the 
+        filter function to match that with the items from the response (saved in allposts) so 
+        that we can grab the title as well.
+        I am doing another filter at the end to remove all the null elements. 
+        */
+        function search() {
+            //document.getElementById("results").innerHTML = "";
+            let query = document.getElementById("search-field").value;
+            let results = lunrIndex.search(query).map(result => {
+                return Files.filter(file => {
+                    return String(file.id) === result.ref; //&& result.score > .4;
+                })[0];
+            });
+            results = results.filter(p => {
+                if (p) {
+                    return true;
+                }
+            });
+            displayResults = results.map(p => (p.text + '\n'))
+            document.getElementById("results").innerHTML = displayResults;
+        }
+
+        /*
+        let totalResults;
+        results = results.filter(p => {
+            if (p) {
+                return true;
+            }
+        });*/
+
+
+        /*
+            Write the output to the DOM
+            
+            document.createElement("h1");
+            for (let i = 0; i < 20 && i < results.length; i++) {
+                let header = document.createElement("h2");
+                let anchor = document.createElement("a");
+                anchor.setAttribute("href", results[i].uri);
+                anchor.innerText = results[i].title;
+                header.appendChild(anchor);
+                document.getElementById("results").appendChild(header);
+                document.getElementById("found").innerText = `Found ${
+                results.length
+              } results - showing ${i + 1}`;
+            }
+        }
+        /*
+        document
+            .getElementById("search-field")
+            .addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    search();
+                }
+            });
+        */
+        //}
     </script>
 
-    </script>
+
 </body>
 
 </html>

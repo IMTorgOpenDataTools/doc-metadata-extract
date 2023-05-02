@@ -38,7 +38,7 @@ def test_create_table():
                'page_nos': 100,
                'size': '30KB',
                'toc': 'Lorem ipsum dolor sit amet, <br>consectetur adipiscing elit, <br>sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br>Ut enim ad minim veniam, <br>quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <br>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <br>Excepteur sint occaecat cupidatat non proident, <br>sunt in culpa qui officia deserunt mollit anim id est laborum.',
-               'text': 'Mr. Green killed Colonel Mustard in the study with the candlestick.'
+               'text': 'Mr. Green killed Colonel Mustard in the study with the green candlestick.'
                }
     record2 = {'id':2,
                'title': 'Document Title 2',
