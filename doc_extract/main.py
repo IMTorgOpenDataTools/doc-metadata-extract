@@ -74,7 +74,7 @@ def create_index_report(output_dir, docs):
 
     report = Report(logger, template_path)
     html = report.create_report(template=template, 
-                                template_args=template_data
+                                template_data=template_data
                                 )
     report.save_report(html, filepath=output_filepath)
 

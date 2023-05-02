@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+<!--
+    Template to produce report.
+
+    Variables:
+    * records(Document)
+    * 
+
+TODO:
+Render string in Jinja to JavaScript variable, use vue to grab data from html meta tag
+https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-into-javascript-snippet
+-->
 <html>
 
 <head>
@@ -9,6 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="css/style.css" rel="stylesheet">
+    <script src="https://unpkg.com/lunr/lunr.js"></script>
 
     <style>
         .item1 {
@@ -43,7 +55,7 @@
             background-color: rgba(255, 255, 255, 0.8);
             text-align: center;
             padding: 20px 0;
-            font-size: 20px;
+            font-size: 18px;
         }
         
         table {
@@ -52,9 +64,18 @@
             width: 100%;
         }
         
-        td,
+        td.small {
+            font-size: 12px;
+        }
+        
         th {
-            border: 1px solid #dddddd;
+            border: 1px solid #c2ccd9;
+            text-align: center;
+            padding: 8px;
+        }
+        
+        td {
+            border: 1px solid #c2ccd9;
             text-align: left;
             padding: 8px;
         }
@@ -64,7 +85,7 @@
         }
         
         tr:nth-child(4n-1) {
-            background-color: #dddddd;
+            background-color: #bbcee7;
         }
         
         tr+tr.child {
@@ -81,12 +102,11 @@
 
     <div class="grid-container">
         <div class="item1">
-            <h1>Header</h1>
+            <h1>Document Index</h1>
         </div>
-        <div class="item2">Menu
+        <div class="item2">
             <div id="vm">
-                <p></p>
-                <p>[[ greeting ]]</p>
+                <!--<p>[[ greeting ]]</p>-->
             </div>
         </div>
 
@@ -95,31 +115,43 @@
                 <thead>
                     <tr>
                         <th>Title</th>
+                        <th>Original File Name</th>
                         <th>Pages</th>
-                        <th>Size</th>
+                        <th>Sentences</th>
+                        <th>Size (MB)</th>
+                        <th>Metadata</th>
+                        <th>Date Created</th>
                     </tr>
                 </thead>
                 <tbody>
                     
                     <tr class="fold" @click="e => e.currentTarget.classList.toggle('fold')">
-                        <td>Document Title 1</td>
+                        <td></td>
+                        <td></td>
                         <td>100</td>
-                        <td>30KB</td>
+                        <td></td>
+                        <td></td>
+                        <td class="small">Author: <br> Subject: <br> Keywords: </td>
+                        <td></td>
                     </tr>
                     <tr class="child">
-                        <td>
-                            <p>Lorem ipsum dolor sit amet, <br>consectetur adipiscing elit, <br>sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br>Ut enim ad minim veniam, <br>quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <br>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <br>Excepteur sint occaecat cupidatat non proident, <br>sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <td class="small">
+                            <p></p>
                         </td>
                     </tr>
                     
                     <tr class="fold" @click="e => e.currentTarget.classList.toggle('fold')">
-                        <td>Document Title 2</td>
+                        <td></td>
+                        <td></td>
                         <td>200</td>
-                        <td>2MB</td>
+                        <td></td>
+                        <td></td>
+                        <td class="small">Author: <br> Subject: <br> Keywords: </td>
+                        <td></td>
                     </tr>
                     <tr class="child">
-                        <td>
-                            <p>Ipsum lorem dolor sit amet, <br>consectetur adipiscing elit, <br>sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br>Ut enim ad minim veniam, <br>quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <br>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <br>Excepteur sint occaecat cupidatat non proident, <br>sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <td class="small">
+                            <p></p>
                         </td>
                     </tr>
                     
@@ -127,8 +159,8 @@
             </table>
         </div>
 
-        <div class="item4">Margin</div>
-        <div class="item5">Footer</div>
+        <div class="item4"></div>
+        <div class="item5"></div>
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
@@ -154,6 +186,13 @@
                 }
             }
         }).mount('#btn')
+    </script>
+
+    <script>
+        data = '{"fieldVectors": [["title/1", [0, 0.182, 1, 0.182, 2, 0.693]], ["text/1", [3, 0.649, 4, 0.171, 5, 0.649, 6, 0.649, 7, 0.649, 8, 0.171, 9, 0.649]], ["title/2", [0, 0.182, 1, 0.182, 10, 0.693]], ["text/2", [4, 0.196, 8, 0.196, 11, 0.744, 12, 0.744, 13, 0.744]]], "fields": ["title", "text"], "invertedIndex": [["1", {"_index": 2, "text": {}, "title": {"1": {}}}], ["2", {"_index": 10, "text": {}, "title": {"2": {}}}], ["candlestick", {"_index": 9, "text": {"1": {}}, "title": {}}], ["colonel", {"_index": 6, "text": {"1": {}}, "title": {}}], ["document", {"_index": 0, "text": {}, "title": {"1": {}, "2": {}}}], ["green", {"_index": 4, "text": {"1": {}, "2": {}}, "title": {}}], ["kill", {"_index": 5, "text": {"1": {}}, "title": {}}], ["mr", {"_index": 3, "text": {"1": {}}, "title": {}}], ["mustard", {"_index": 7, "text": {"1": {}}, "title": {}}], ["plant", {"_index": 13, "text": {"2": {}}, "title": {}}], ["plumb", {"_index": 12, "text": {"2": {}}, "title": {}}], ["professor", {"_index": 11, "text": {"2": {}}, "title": {}}], ["studi", {"_index": 8, "text": {"1": {}, "2": {}}, "title": {}}], ["titl", {"_index": 1, "text": {}, "title": {"1": {}, "2": {}}}]], "pipeline": ["stemmer"], "version": "2.3.9"}'
+        var idx = lunr.Index.load(JSON.parse(data))
+    </script>
+
     </script>
 </body>
 

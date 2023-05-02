@@ -31,12 +31,13 @@ class Document:
                         }
     #TODO: word_extensions = [".doc", ".odt", ".rtf", ".docx", ".dotm", ".docm"]
     #TODO: ppt_extensions = [".ppt", ".pptx"]
+    #TODO: initialize all attributes before running methods
 
     def __init__(self, logger, path):
         cond1 = type(path) == PosixPath
         cond2 = path.is_file()
         if not cond1:
-            logger.info("TypeError: arg `path` {path} must be of type pathlib.Path")
+            logger.info(f"TypeError: arg `path` {path} must be of type pathlib.Path")
             raise TypeError
         elif not cond2:
             logger.info(f"arg `path` {path} must be a file")
@@ -50,14 +51,16 @@ class Document:
         self.filetype = None
         self.file_size_mb = None
         self.length_lines = None
+        self.docs = None
 
         self.filetype, self.file_size_mb = self.determine_file_info(path)
         extractions = self.apply_extraction(logger)
-        for k,v in extractions.items():
-            setattr(self, k, v)
-        self.run_pipeline()
-        self.rename_file()
-
+        if self.filetype:
+            for k,v in extractions.items():
+                setattr(self, k, v)
+            self.run_pipeline()
+            self.rename_file()
+        
     def determine_file_info(self, path):
         """Determine file system information for the file.
 

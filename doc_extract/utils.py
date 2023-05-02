@@ -9,10 +9,31 @@ __license__ = "MIT"
 
 
 import signal
+from collections import namedtuple
 
 MAX_PAGE_EXTRACT = None
 
-record = {'title': None,
+
+# Object storing each Filing's multiple Documents.
+#TODO:implement record in this, then xfer Document data to this object, which will be used as input parameters
+DocumentMetadata = namedtuple(
+    "DocumentMetadata",
+    [
+        "Seq",
+        "Description",
+        "Document",
+        "Type",
+        "Size",
+        "URL",
+        "Extension",
+        "FS_Location",
+        "Report_date"
+    ]
+)
+
+
+record = {'id': None,    #TODO: create id
+          'title': None,
           'author': None,
           'subject': None,
           'keywords': None,

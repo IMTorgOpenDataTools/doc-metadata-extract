@@ -2,7 +2,7 @@
 
 This project extracts metadata from files within a directory and returns a single, interactive html index of file descriptions.  Rather than opening and reviewing files, individually, the interactive index is intended to be a portable, single-source of reference for the documents.
 
-This is useful when performing manual information extraction with large numbers of documents.
+This is useful when performing manual information extraction with large numbers of documents.  The following helps explain the type of questions it answers.
 
 ![Information Extraction Framework](./docs/IE_framework.jpg)
 
@@ -21,7 +21,7 @@ Collected file metadata include:
 * individual file, aggregated data: topics, key words / phrases, internal wordnet
 * collective directory, comparison data: similarity with others, N-topics and relevance to each topic, ...
 
-Data can graphically displayed:
+Data can be graphically displayed:
 
 * what manageble number (3-6) of topics are overlapping across sources?  => topic modeling
 * how can each source be located with respect to each topic?  => network attraction graph
@@ -58,6 +58,20 @@ _workflow_
 * extract unique file key (if available)
 * extract folder structure
 
+_search_
+
+extraction
+```python
+>>> from lunr import lunr
+>>> documents = [{...
+>>> idx = lunr(ref='id', fields=('title', 'body'), documents=documents)
+```
+template
+```js
+idx.search("love")
+```
+
+
 _commandline_
 * logs
 * explore indv aggregated data
@@ -70,9 +84,13 @@ _frontend_
 * search 
   - lunr index
   - highlight specific text
-* sort by folder structure and key words columns
-* export selected references to xlsx
+* sort by folder structure and key words columns, [ref](https://www.w3schools.com/howto/howto_js_sort_table.asp)
+* export selected references to xlsx, [ref](https://sheetjs.com/demo/table)
 
+
+### Long-term
+
+This prototype should be separated by scope.  The `doc-metadata-extract` should focus soley on extracting raw data from different document formats (`document.py`,`extractions.py`).  This requires combining many different modules and algorithms.  In contrast, a serverless deployment should be created to perform API routing, data aggregation, and reporting functionality.
 
 
 ### Word files

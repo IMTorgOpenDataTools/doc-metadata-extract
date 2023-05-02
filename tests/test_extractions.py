@@ -22,6 +22,7 @@ import pytest
 
 def test_extract_docx():
     #TODO: improve convert .docx to .pdf
+    #TODO: this fails because title includes to much: 'record['title']  "Title for paper submitted to International Journal of Scientific and Research PublicationsFirst Author*, Second Author**, Th....
     #filepath_str = 'tests/data/example.docx', 'Document Title', 7
     filepath_str = 'tests/data/IJSRP-paper-submission-format-single-column.docx'
     class Tmp:

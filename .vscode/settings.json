@@ -7,15 +7,15 @@
 
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.testing.pytestPath": "/home/vscode/.local/share/virtualenvs/doc_metadata_extract-rVx2ljom/bin/pytest",
-    "python.pipenvPath": "/home/vscode/.local/share/virtualenvs/doc_metadata_extract-rVx2ljom/bin/python",
+    "python.testing.pytestPath": "/home/vscode/.local/share/virtualenvs//doc-metadata-extract-X6Em-Iab/bin/pytest",
+    "python.pipenvPath": "/home/vscode/.local/share/virtualenvs//doc-metadata-extract-X6Em-Iab/bin/python",
 
 
-    "python.linting.pylintPath": "/home/vscode/.local/share/virtualenvs/doc_metadata_extract-rVx2ljom/bin/python",
-    "python.autoComplete.extraPaths": ["/home/vscode/.local/share/virtualenvs/doc_metadata_extract-rVx2ljom/bin/python"],
-    "python.defaultInterpreterPath": "/home/vscode/.local/share/virtualenvs/doc_metadata_extract-rVx2ljom/bin/python",
+    "python.linting.pylintPath": "/home/vscode/.local/share/virtualenvs//doc-metadata-extract-X6Em-Iab/bin/python",
+    "python.autoComplete.extraPaths": ["/home/vscode/.local/share/virtualenvs//doc-metadata-extract-X6Em-Iab/bin/python"],
+    "python.defaultInterpreterPath": "/home/vscode/.local/share/virtualenvs//doc-metadata-extract-X6Em-Iab/bin/python",
     "python.analysis.extraPaths": [
-        "/home/vscode/.local/share/virtualenvs/doc_metadata_extract-rVx2ljom/"
+        "/home/vscode/.local/share/virtualenvs//doc-metadata-extract-X6Em-Iab/"
     ],
     "files.exclude": {
         "**/.git": true,
