@@ -53,24 +53,11 @@ _workflow_
 * ~~make faster
 * ~~rec.name is not available for original name
 * ~~size and other attributes should be added
-* build lunr index and add full text
-* ocr docs of images, such as ppt slides
+* ~~build lunr index and add full text
+* separate text (then index) into smaller pieces so optimize lunr search
 * extract unique file key (if available)
 * extract folder structure
-
-_search_
-
-extraction
-```python
->>> from lunr import lunr
->>> documents = [{...
->>> idx = lunr(ref='id', fields=('title', 'body'), documents=documents)
-```
-template
-```js
-idx.search("love")
-```
-
+* ocr docs of images, such as ppt slides
 
 _commandline_
 * logs
@@ -81,11 +68,16 @@ _commandline_
 * run via cmdln as module
 
 _frontend_
-* search 
-  - lunr index
+* ~~search 
+  - ~~lunr index
   - highlight specific text
+* use `vue-table-2` for child row
 * sort by folder structure and key words columns, [ref](https://www.w3schools.com/howto/howto_js_sort_table.asp)
 * export selected references to xlsx, [ref](https://sheetjs.com/demo/table)
+
+_design considerations_
+* single webpack on html file
+* maximum data html file can hold
 
 
 ### Long-term
