@@ -257,10 +257,6 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
 
 
     <script>
-        function selectRow() {
-
-        }
-
         function myFunction() {
             let text = document.getElementById("search-field").value;
             document.getElementById("results").innerHTML = "You wrote: " + text;
@@ -295,7 +291,6 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
                     return true;
                 }
             });
-            //displayResults = results.map(p => ('  ' + p.id + ') ' + p.body + '\n'))
             displayResults = results.map(p => (` ${p.id})  ${p.body} \n`))
             document.getElementById("results").innerHTML = displayResults;
         }

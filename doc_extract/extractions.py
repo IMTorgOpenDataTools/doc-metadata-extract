@@ -45,11 +45,12 @@ import fitz
 
 
 from utils import (
-    DocumentRecord, 
-    MAX_PAGE_EXTRACT, 
+    MAX_PAGE_EXTRACT,
+    DocumentRecord,  
     timeout
 )
-record = DocumentRecord._asdict()
+docrec = DocumentRecord()
+record = docrec._asdict()
 
 
 

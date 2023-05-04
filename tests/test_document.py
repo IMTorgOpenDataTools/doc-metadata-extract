@@ -12,16 +12,25 @@ import sys
 from pathlib import Path
 sys.path.append(Path('doc_extract').absolute().as_posix() )
 from doc_extract.document import Document
+from doc_extract.utils import DocumentRecord
 
 
 from logzero import logger
 import pytest
 
 
+def test_document_attributes():
+    test_file = Path('tests/data/example.pdf')
+    doc = Document(logger, test_file)
+    docrec = DocumentRecord()
+    result = docrec.validate_object_attrs(doc)
+    assert list(result) == ['target_attrs_to_remove', 'target_attrs_to_add']
+
 def test_document_creation_fail():
     test_file = Path('tests/data/no_file.docx')
     with pytest.raises(Exception) as e_info:
         doc = Document(logger, test_file)
+    assert type(e_info) == pytest.ExceptionInfo
 
 def test_document_determine_filetype_fail():
     """Filetypes that fail: .doc, .rtf, .tif, .docm, .dot"""

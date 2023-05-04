@@ -52,6 +52,7 @@ class Document:
         self.file_size_mb = None
         self.length_lines = None
         self.docs = None
+        self.body = None    #TODO exchange self.text for this
 
         self.filetype, self.file_size_mb = self.determine_file_info(path)
         extractions = self.apply_extraction(logger)
@@ -109,10 +110,11 @@ class Document:
 
     def rename_file(self):
         """Determine `self.filename_modified` for the new file name."""
+        file_extension = '' if self.file_extension == None else self.file_extension
         if self.title:
-            self.filename_modified = self.title + self.file_extension
+            self.filename_modified = self.title + file_extension
         else:
-            self.filename_modified = self.filename_original + self.file_extension
+            self.filename_modified = self.filename_original + file_extension
         return 1
 
     def save_modified_file(self, filepath_modified):

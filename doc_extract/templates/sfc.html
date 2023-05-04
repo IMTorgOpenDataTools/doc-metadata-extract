@@ -1,0 +1,58 @@
+<html>
+
+<head>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+
+<style>
+/* CSS file */
+.checkbox-wrapper {
+  border: 1px solid;
+  display: flex;
+}
+.checkbox {
+  width: 50px;
+  height: 50px;
+  background: red;
+}
+.checkbox.checked {
+  background: green;
+}
+</style>
+
+</head>
+
+
+<body>
+
+<div id="app"> <!-- the root Vue element -->
+  <my-checkbox></my-checkbox> <!-- your component -->
+</div>
+
+
+<script type="text/x-template" id="checkbox-template">
+    <div class="checkbox-wrapper" @click="check">
+        <div :class="{ checkbox: true, checked: checked }"></div>
+        <div class="title">{{ title }}</div>
+    </div>
+</script>
+
+
+<script>
+// this is the JS file, eg app.js
+Vue.component('my-checkbox', {
+    template: '#checkbox-template',
+    data() {
+        return { checked: false, title: 'Check me' }
+    },
+    methods: {
+        check() { this.checked = !this.checked; }
+    }
+});
+
+new Vue({el:'#app'})
+</script>
+
+
+</body>
+</html>

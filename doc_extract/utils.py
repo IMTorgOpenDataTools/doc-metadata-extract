@@ -8,17 +8,23 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 
+from faker import Faker
+
 import signal
 from collections import namedtuple
+from typing import Any
+import copy
+import inspect
 
 MAX_PAGE_EXTRACT = None
 
 
 # Object storing each Filing's multiple Documents.
 #TODO:implement record in this, then xfer Document data to this object, which will be used as input parameters
-DocumentRecord = namedtuple(
-    "DocumentRecord",
-    [
+"""TODO add keys: author, tag_categories, summary
+Keys are format, encryption, title, author, subject, keywords, (creator, producer=>author), creationDate, modDate, trapped.
+"""
+record_attrs = [
         #file indexing
         "id",
         "filepath",
@@ -45,79 +51,101 @@ DocumentRecord = namedtuple(
         "tag_categories",
         "keywords",
         "summary"
-    ]
-)
+]
+DocumentBase = namedtuple("DocumentBase", record_attrs)
 
 
-"""TODO add keys: author, tag_categories, summary
-Keys are format, encryption, title, author, subject, keywords, (creator, producer=>author), creationDate, modDate, trapped.
+fake = Faker()
+Faker.seed(0)
+class DocumentRecord(DocumentBase):
+     """Extended functionality of namedtuple."""
 
+     _count = 0
+     _inherited_attrs = ['count','index']
 
-        DocumentRecord(
-            id=1,
-            filepath=None,
-            filename_original=None,
-            filename_modified=None,
-            file_extension=None,
-            filetype=None,
-            page_nos=None,
-            length_lines=None,
-            file_size_mb=None,
-            date=None,
-            reference_number=None,
-            title=None,
-            author=None,
-            subject=None,
-            toc=None,
-            pp_toc=None
-            body=None,
-            tag_categories=None,
-            keywords=None,
-            summary=None
-            )
-"""
+     def __new__(cls, **kwargs):
+          """Create new DocumentRecord object.  Ensure the 
+          record maintains the correct attributes and an 
+          original index number.
 
-
-class TestDocument:
-     """Singleton of functionality for validating and 
-     testing Documents."""
-
-     def __init__(self):
-          pass
+          Usage::
+          empty_doc = DocumentRecord()
+          typical_doc = DocumentRecord(title='title', author='name')
+          fake_doc = DocumentRecord(id='FAKE')
+          """
+          idx = 'id'
+          base_attrs = record_attrs
+          if idx in kwargs.keys():
+               if kwargs[idx] == 'FAKE':
+                    new_kwargs = cls._create_fake_record(cls)
+          else:
+               new_kwargs = {}
+               for k in base_attrs:
+                    if k==idx: 
+                         new_kwargs[k] = cls._get_next_index(cls)
+                    elif k not in kwargs.keys(): 
+                         new_kwargs[k] = None
+                    else: 
+                         new_kwargs[k] = kwargs[k]
+          self = super(DocumentRecord, cls).__new__(cls, **new_kwargs)
+          return self
      
-     def validate_object_keys(self):
-          pass
-     
-     def validate_object_attrs(self):
-          pass
-     
-     def create_named_tuple(self):
-          record = DocumentRecord(
-               id=1,
-                  filepath=None,
-                  filename_original=None,
-                  filename_modified='Document Title 1',
-                  file_extension=None,
-                  filetype=None,
-                  page_nos=100,
-                  length_lines=None,
-                  file_size_mb='30KB',
-                  date=None,
-                  reference_number=None,
-                  title='Document Title 1',
-                  author=None,
-                  subject=None,
-                  toc=None,
-                  pp_toc='Lorem ipsum dolor sit amet, <br>consectetur adipiscing elit, <br>sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br>Ut enim ad minim veniam, <br>quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <br>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <br>Excepteur sint occaecat cupidatat non proident, <br>sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                  body='Mr. Green killed Colonel Mustard in the study with the green candlestick.',
-                  tag_categories=None,
-                  keywords=None,
-                  summary=None
-                  )
-          return record
-     
-     def create_document_objects(self):
-          pass
+     def _get_next_index(cls):
+          """Control class index values."""
+          original_count = copy.deepcopy(cls._count)
+          cls._count = original_count + 1
+          return original_count
+
+     def _create_fake_record(cls):
+          """Create a realistic but fake record."""
+          title = 'Document Title'+str(fake.random_int())
+          toc = [str(idx+1) + ') ' + fake.text(max_nb_chars = 20) for idx in range(7)]
+          tmp = fake.text(max_nb_chars = 5000)
+          body = ' '.join(tmp.split()).replace('\n',' ')
+          summary = body[:100]
+          record_values = {
+               'id': cls._get_next_index(cls),
+               'filepath': fake.file_path(),
+               'filename_original': fake.file_name(),
+               'filename_modified': title,
+               'file_extension': fake.file_extension(),
+               'filetype': fake.random_choices(elements=('.pdf','docx')),
+               'page_nos': fake.random_int(),
+               'length_lines': fake.random_int(),
+               'file_size_mb': str(fake.random_int())+'KB',
+               'date': fake.date_time(),
+               'reference_number': fake.random_int(),
+               'title': title,
+               'author': fake.name(),
+               'subject': fake.safe_color_name(),
+               'toc': toc,
+               'pp_toc': ' <br>'.join(toc),
+               'body': body,
+               'tag_categories': fake.random_choices(elements=('astronomy','biology','math')),
+               'keywords': fake.text(max_nb_chars = 20),
+               'summary': summary
+          }
+          check_attrs = set(record_values.keys()).difference(set(record_attrs))
+          if check_attrs: 
+               raise TypeError
+          return record_values
+
+     def validate_object_attrs(self, target):
+          """Validate that an object has the same attributes
+          as DocumentRecord.
+
+          :param target - document object
+          :return result(dict[str,str]) - which attributes should be added / removed from target
+          """
+          pairs = inspect.getmembers(target, lambda a:not(inspect.isroutine(a)))
+          target_attrs = set( [a[0] for a in pairs if not(a[0].startswith('__') and a[0].endswith('__'))] )
+          docrec_attrs = set( self._asdict().keys() )
+          docrec_attrs_missing = target_attrs.difference(docrec_attrs)
+          target_attrs_missing = docrec_attrs.difference(target_attrs)
+          result = {'target_attrs_to_remove': docrec_attrs_missing,
+                    'target_attrs_to_add': target_attrs_missing,
+                    }
+          return result
 
 
 class timeout:

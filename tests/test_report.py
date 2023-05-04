@@ -37,53 +37,12 @@ def test_create_filled_report():
     image_path = Path(template_path) / 'static/chart.svg'
     svg_image = load_svg(image_path)
 
-    record_tuples = [     
-        DocumentRecord(
-            id=1,
-            filepath=None,
-            filename_original=None,
-            filename_modified='Document Title 1',
-            file_extension=None,
-            filetype=None,
-            page_nos=100,
-            length_lines=None,
-            file_size_mb='30KB',
-            date=None,
-            reference_number=None,
-            title='Document Title 1',
-            author=None,
-            subject=None,
-            toc=None,
-            pp_toc='Lorem ipsum dolor sit amet, <br>consectetur adipiscing elit, <br>sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br>Ut enim ad minim veniam, <br>quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <br>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <br>Excepteur sint occaecat cupidatat non proident, <br>sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            body='Mr. Green killed Colonel Mustard in the study with the green candlestick.',
-            tag_categories=None,
-            keywords=None,
-            summary=None
-            ),
-        DocumentRecord(
-            id=2,
-            filepath=None,
-            filename_original=None,
-            filename_modified='Document Title 2',
-            file_extension=None,
-            filetype=None,
-            page_nos=200,
-            length_lines=None,
-            file_size_mb='30KB',
-            date=None,
-            reference_number=None,
-            title='Document Title 2',
-            author=None,
-            subject=None,
-            toc=None,
-            pp_toc='Lorem ipsum dolor sit amet, <br>consectetur adipiscing elit, <br>sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br>Ut enim ad minim veniam, <br>quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <br>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <br>Excepteur sint occaecat cupidatat non proident, <br>sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            body='Professor Plumb has a green plant in his study',
-            tag_categories=None,
-            keywords=None,
-            summary=None
-            )
-        ]
-    records = [rec._asdict() for rec in record_tuples]
+    record_tuples = [DocumentRecord(id='FAKE') for i in range(5)] 
+    records = []  
+    for rec in record_tuples:
+        rec_dict = rec._asdict()
+        rec_dict_str = {k:str(v) for k,v in rec_dict.items()}
+        records.append(rec_dict_str )
     lunr_index = lunr(
         ref='id', fields=('title', 'body'), documents=records
     )
