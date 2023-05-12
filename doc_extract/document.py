@@ -29,6 +29,34 @@ class Document:
                          '.csv': ex.extract_csv,
                          '.xlsx': ex.extract_xlsx
                         }
+    _record_attrs = [
+            #file indexing
+            "id",
+            "filepath",
+            "filename_original",
+            "filename_modified",
+
+            #raw
+            "file_extension",
+            "filetype",
+            "page_nos",
+            "length_lines",
+            "file_size_mb",
+            "date",
+
+            #inferred / searchable
+            "reference_number",
+            "title",
+            "author",
+            "subject",
+            "toc",
+            "pp_toc",
+
+            "body",
+            "tag_categories",
+            "keywords",
+            "summary"
+    ]
     #TODO: word_extensions = [".doc", ".odt", ".rtf", ".docx", ".dotm", ".docm"]
     #TODO: ppt_extensions = [".ppt", ".pptx"]
     #TODO: initialize all attributes before running methods
@@ -42,26 +70,36 @@ class Document:
         elif not cond2:
             logger.info(f"arg `path` {path} must be a file")
             raise TypeError
-            
+        
+        [setattr(self, key, None) for key in self._record_attrs]
+        #file indexing
         self.filepath = path
         self.filename_original = path.stem
-        self.filename_modified = None
         self.file_extension = path.suffix
-
-        self.filetype = None
-        self.file_size_mb = None
-        self.length_lines = None
-        self.docs = None
-        self.body = None    #TODO exchange self.text for this
+        self.docs = None            #TODO:spacy output not currently used
 
         self.filetype, self.file_size_mb = self.determine_file_info(path)
-        extractions = self.apply_extraction(logger)
+        extractions = self.run_extraction_pipeline(logger)
         if self.filetype:
             for k,v in extractions.items():
-                setattr(self, k, v)
-            self.run_pipeline()
+                if hasattr(self, k):
+                    if not getattr(self,k):
+                        setattr(self, k, v)
+            if self.body:
+                self.run_spacy_pipeline(body = self.body)
             self.rename_file()
-        
+        missing_attr = self.get_missing_attributes()
+        cnt = missing_attr.__len__()
+        logger.info(f"Document `{self.filename_original}` populated with {cnt} missing (None) attributes: {missing_attr}")
+
+    def _asdict(self):
+        """Return dict of attributes."""
+        result = {}
+        for attr in self._record_attrs:
+            val = getattr(self, attr)
+            result[attr] = val
+        return result
+
     def determine_file_info(self, path):
         """Determine file system information for the file.
 
@@ -77,7 +115,7 @@ class Document:
         filesize = round(size_in_mb, ndigits=3)
         return filetype, filesize
 
-    def apply_extraction(self, logger):
+    def run_extraction_pipeline(self, logger):
         """Apply extractions appropriate for the format.
 
         Don't throw exception if not an available 
@@ -93,13 +131,13 @@ class Document:
         result['pp_toc'] = self.pretty_print_toc( result['toc'] )
         return result
 
-    def run_pipeline(self):
+    def run_spacy_pipeline(self, body):
         """Run nlp pipeline to apply tags.
         
         Get the number of sentences (`length_lines`) for the excerpts made,
         which is based on `utils.MAX_PAGE_EXTRACT`.
         """
-        docs = nlp.pipe(self.text)
+        docs = nlp.pipe(body)
         docs, gen1 = itertools.tee(docs)
         self.docs = docs
         length_lines = 0
@@ -116,6 +154,18 @@ class Document:
         else:
             self.filename_modified = self.filename_original + file_extension
         return 1
+
+    def get_missing_attributes(self):
+        """Count the number of attributes not populated after initialization
+        pipelines are run."""
+        result = {}
+        missing = []
+        for attr in self._record_attrs:
+            val = getattr(self, attr)
+            result[attr] = val
+            if val == None: 
+                missing.append(attr)
+        return missing
 
     def save_modified_file(self, filepath_modified):
         """Copy the original file with the modified name.

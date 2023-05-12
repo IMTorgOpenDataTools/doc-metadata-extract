@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html><link href="data:text/css,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20ddg-runtime-checks%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20none%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20" rel="stylesheet" type="text/css"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="index_v1_files/style.css" rel="stylesheet">
+
+    <style>
+        .item1 {
+            grid-area: header;
+        }
+        
+        .item2 {
+            grid-area: menu;
+        }
+        
+        .item3 {
+            grid-area: main;
+        }
+        
+        .item4 {
+            grid-area: right;
+        }
+        
+        .item5 {
+            grid-area: footer;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-areas: 'header header header header header header' 'menu main main main right right' 'menu footer footer footer footer footer';
+            gap: 10px;
+            background-color: #eff4f8;
+            padding: 10px;
+        }
+        
+        .grid-container>div {
+            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 20px 0;
+            font-size: 18px;
+        }
+        
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        td.small {
+            font-size: 12px;
+        }
+        
+        th {
+            border: 1px solid #c2ccd9;
+            text-align: center;
+            padding: 8px;
+        }
+        
+        td {
+            border: 1px solid #c2ccd9;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr.child>td {
+            border: 0;
+        }
+        
+        tr:nth-child(4n-1) {
+            background-color: #bbcee7;
+        }
+        
+        tr+tr.child {
+            display: inline;
+        }
+        
+        tr.fold+tr.child {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="grid-container">
+        <div class="item1">
+            <h1>Document Index</h1>
+        </div>
+        <div class="item2">
+            <div id="vm" data-v-app=""><!--<p>[[ greeting ]]</p>--></div>
+        </div>
+
+        <div class="item3">
+            <table id="btn" data-v-app=""><thead><tr><th>Title</th><th>Original File Name</th><th>Pages</th><th>Sentences</th><th>Size (MB)</th><th>Metadata</th><th>Date Created</th></tr></thead><tbody><tr class="fold"><td>Weakly-Supervised Questions for Zero-Shot Relation Extraction.pdf</td><td>cs_nlp_2301.09640</td><td>12</td><td>419</td><td>0.379</td><td class="small">Author: <br> Subject: <br> Keywords: </td><td>2023-01-25</td></tr><tr class="child"><td class="small"><p>None</p></td></tr><tr class="fold"><td>Designing organizations for bottom-up task allocation: The role of incentives.pdf</td><td>econ_2301.00410</td><td>38</td><td>759</td><td>1.445</td><td class="small">Author: Stephan Leitner; <br> Subject: <br> Keywords: </td><td>2023-01-02</td></tr><tr class="child"><td class="small"><p>1 Introduction<br>2 Mirroring in task allocation<br>3 The agent-based model<br>3.1 Model overview<br>3.2 Task environment<br>3.3 Agents and task decomposition<br>3.4 Sub-model A: Hill climbing search<br>3.5 Sub-model B: Learning interdependencies<br>3.6 Sub-model C: Task allocation<br>3.6.1 Performance-based approach<br>3.6.2 Interdependence-based approach<br>3.6.3 Task allocation<br>3.7 Simulation setup and observations<br>3.8 Data analysis<br>4 Results and discussion<br>4.1 The effects of incentives in bottom-up task allocation<br>4.2 Modularity and bottom-up task allocation<br>4.3 Discussion<br>4.3.1 Altruistic incentive mechanisms and bottom-up task allocation<br>4.3.2 Individualistic incentive mechanisms and bottom-up task allocation<br>5 Summary and conclusion</p></td></tr><tr class="fold"><td>Reconstruction of Fission Events in Heavy Ion Reactions with CSHINE.pdf</td><td>nuclear_2201.00276</td><td>7</td><td>394</td><td>3.032</td><td class="small">Author: <br> Subject: <br> Keywords: </td><td>2022-01-04</td></tr><tr class="child"><td class="small"><p>Reconstruction of Fission Events in Heavy Ion Reactions with CSHINE<br>Abstract<br>I Introduction<br>II CSHINE detector system and the experimental setup<br>III Reconstruction of the Velocity<br>IV Results and Discussions<br>V Summary<br>VI Acknowledgments<br> References</p></td></tr><tr class="fold"><td>prob_2301.09751.pdf</td><td>prob_2301.09751</td><td>10</td><td>271</td><td>0.139</td><td class="small">Author: <br> Subject: <br> Keywords: </td><td>2023-01-24</td></tr><tr class="child"><td class="small"><p>1 Introduction<br>2 Main results and proofs</p></td></tr><tr class="fold"><td>Highlights.pdf</td><td>quant_finance_2301.00248</td><td>18</td><td>429</td><td>0.336</td><td class="small">Author: Thomas Dierckx ; Jesse Davis ; Wim Schoutens ; <br> Subject: <br> Keywords: </td><td>2023-01-03</td></tr><tr class="child"><td class="small"><p>1 Introduction<br>2 Preliminaries<br>2.1 Market Implied Volatility<br>2.2 Random Forests<br>2.3 Hidden Markov Models<br>3 Methodology<br>3.1 Stock Universe Selection<br>3.2 Data Acquisition and Feature Generation<br>3.3 Predicting Movements in Implied Volatility<br>3.4 Experimental Evaluation<br>3.5 Analyzing Performance through Time with Hidden Markov Models<br>4 Experimental Results and Discussion<br>4.1 Ablation Study<br>4.2 Predictive Performance across Sectors<br>4.2.1 The Effect of Option Liquidity<br>4.2.2 The Effect of Twitter Attention<br>4.3 Performance across Implied Volatility Regimes<br>5 Conclusion<br>Appendix A Selected Stock Universe</p></td></tr></tbody></table>
+        </div>
+
+        <div class="item4"></div>
+        <div class="item5"></div>
+    </div>
+    <script src="index_v1_files/vue.global.js"></script>
+    <script>
+        const {
+            createApp
+        } = Vue
+
+        createApp({
+            delimiters: ['[[', ']]'],
+            data() {
+                return {
+                    greeting: 'Hello Vue!'
+                }
+            }
+        }).mount('#vm')
+    </script>
+
+    <script>
+        createApp({
+            data() {
+                return {
+                    display: 'Hello Vue!'
+                }
+            }
+        }).mount('#btn')
+    </script>
+
+
+</body></html>

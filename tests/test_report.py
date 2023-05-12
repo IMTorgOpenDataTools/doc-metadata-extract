@@ -31,15 +31,16 @@ def test_create_simple_report():
     assert html == '<h1>Hello World!</h1>'
 
 def test_create_filled_report():
+    output_filepath = './tests/RESULT/index_out.html'
     template_path = './doc_extract/templates'
     template = 'index.html'
-
     image_path = Path(template_path) / 'static/chart.svg'
     svg_image = load_svg(image_path)
+    number_of_records = 5
 
-    record_tuples = [DocumentRecord(id='FAKE') for i in range(5)] 
+    docs = [DocumentRecord(id='FAKE') for i in range(number_of_records )] 
     records = []  
-    for rec in record_tuples:
+    for rec in docs:
         rec_dict = rec._asdict()
         rec_dict_str = {k:str(v) for k,v in rec_dict.items()}
         records.append(rec_dict_str )
@@ -50,13 +51,13 @@ def test_create_filled_report():
                      'lunr_index': lunr_index.serialize(),
                      'svg_image': svg_image
                      }
-    filepath = './tests/html/index_out.html'
+    
 
     report = Report(logger, template_path)
     html = report.create_report(template=template, 
                                 template_data=template_data
                                 )
-    report.save_report(html, filepath=filepath)
+    report.save_report(html, filepath=output_filepath)
     assert True == True
 
 

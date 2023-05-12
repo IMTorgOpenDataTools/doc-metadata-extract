@@ -54,9 +54,9 @@ _workflow_
 * ~~rec.name is not available for original name
 * ~~size and other attributes should be added
 * ~~build lunr index and add full text
-* separate text (then index) into smaller pieces so optimize lunr search
-* extract unique file key (if available)
-* extract folder structure
+* >separate text (then index) into smaller pieces (section, page) so optimize lunr search
+* >extract unique file key (if available)
+* >extract folder structure
 * ocr docs of images, such as ppt slides
 
 _commandline_
@@ -71,13 +71,19 @@ _frontend_
 * ~~search 
   - ~~lunr index
   - highlight specific text
-* use `vue-table-2` for child row
+* ~~use `bootstrap-vue` for child details row
+* separate each template into components for better testing
+* separate out css
 * sort by folder structure and key words columns, [ref](https://www.w3schools.com/howto/howto_js_sort_table.asp)
 * export selected references to xlsx, [ref](https://sheetjs.com/demo/table)
+* help modal
+* textnets selectable svg modal
 
 _design considerations_
 * single webpack on html file
-* maximum data html file can hold
+* tests for maximum data html file can hold
+* convert into Singletons: Report, WebAPI
+* >deploy with flask
 
 
 ### Long-term

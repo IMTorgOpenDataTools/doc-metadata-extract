@@ -18,6 +18,7 @@ pdftitle = "*"
 pymupdf = "*"
 xhtml2pdf = "*"
 lunr = "*"
+flask = "*"
 
 [dev-packages]
 faker = "*"

@@ -300,7 +300,7 @@ def extract_pdf(self, logger):
 
     record['page_nos'] = page_count
     record['toc'] = get_toc(self)
-    record['text'] = excerpts
+    record['body'] = excerpts
 
     return record
 

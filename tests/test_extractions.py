@@ -1,5 +1,7 @@
 """
 Tests for Document class
+
+TODO: ***all extraction methods should be tested - MUCH WORK***
 """
 
 __author__ = "Jason Beach"
@@ -31,7 +33,7 @@ def test_extract_docx():
 
     record = ex.extract_docx(obj, logger)
     #TODO assert record['title'] == 'Document Title'
-    assert len(record['text']) == 7
+    assert len(record['body']) == 7
 
 def test_extract_html():
     filepath_str = 'tests/data/Research Articles in Simplified HTML.html'

@@ -17,6 +17,8 @@ import copy
 import inspect
 
 MAX_PAGE_EXTRACT = None
+MAX_CONTENT_SIZE = 1e+8    #in bytes => 100MB
+ALLOWED_EXTENSIONS = {'.zip'}
 
 
 # Object storing each Filing's multiple Documents.
@@ -133,6 +135,8 @@ class DocumentRecord(DocumentBase):
      def validate_object_attrs(self, target):
           """Validate that an object has the same attributes
           as DocumentRecord.
+
+          TODO: check types also
 
           :param target - document object
           :return result(dict[str,str]) - which attributes should be added / removed from target

@@ -26,6 +26,16 @@ def test_document_attributes():
     result = docrec.validate_object_attrs(doc)
     assert list(result) == ['target_attrs_to_remove', 'target_attrs_to_add']
 
+def test_document_populated():
+    test_file = Path('tests/demo/econ_2301.00410.pdf')
+    doc = Document(logger, test_file)
+    docrec = DocumentRecord()
+    result = docrec.validate_object_attrs(doc)
+    check1 = result['target_attrs_to_remove'] == {'_useable_suffixes', 'docs', '_record_attrs'}
+    check2 = not bool(result['target_attrs_to_add'])
+    check3 = doc.get_missing_attributes() == ['reference_number', 'tag_categories', 'summary']
+    assert not False in [check1, check2, check3]
+
 def test_document_creation_fail():
     test_file = Path('tests/data/no_file.docx')
     with pytest.raises(Exception) as e_info:
