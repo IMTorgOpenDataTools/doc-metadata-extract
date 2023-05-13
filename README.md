@@ -54,7 +54,7 @@ _workflow_
 * ~~rec.name is not available for original name
 * ~~size and other attributes should be added
 * ~~build lunr index and add full text
-* >separate text (then index) into smaller pieces (section, page) so optimize lunr search
+* >separate text (then index) into smaller pieces (section, page) to optimize lunr search
 * >extract unique file key (if available)
 * >extract folder structure
 * ocr docs of images, such as ppt slides
@@ -72,11 +72,15 @@ _frontend_
   - ~~lunr index
   - highlight specific text
 * ~~use `bootstrap-vue` for child details row
+* add readability score column
+* change columns to: Details,Id,Ref,Title,Folder Structure, Original File Name, ...
+* create score column with results from search, and sort rows by it
+* add multiple results and accompanying sections into row.snippets
 * separate each template into components for better testing
 * separate out css
 * sort by folder structure and key words columns, [ref](https://www.w3schools.com/howto/howto_js_sort_table.asp)
 * export selected references to xlsx, [ref](https://sheetjs.com/demo/table)
-* help modal
+* help modal and tooltips
 * textnets selectable svg modal
 
 _design considerations_

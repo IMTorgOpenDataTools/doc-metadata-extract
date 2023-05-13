@@ -19,6 +19,7 @@ from flask import render_template, request
 from werkzeug.utils import secure_filename
 
 import ast
+import re
 import json
 import time
 import argparse
@@ -74,15 +75,21 @@ def is_json(myjson):
     except ValueError as e:
         return False
     return True
-def enforce_json_compliant_string(rec_dict_str):
-    rec_dict_str['body'] = rec_dict_str['body'].replace('"','')
-    """
-    json_str = json.dumps(rec_dict_str)
-    fix1 = json_str.replace('"','')    #.replace("\'","")#.replace('\"','')
-    fix2 = ast.literal_eval(fix1)
-    fix3 = json.loads(json.dumps(fix2))
-    """
-    return rec_dict_str
+def enforce_json_compliant_string(body):
+    #clean-up bad chars
+    #js:dataString is parsed, but indexLunr is not
+    bad_chars = [';', ':', '!', "*", "'", '"', "`", '”', '“', "’"]
+    temp = ''
+    for i in bad_chars:
+        temp += i
+    result = re.sub(rf'[{temp}]', '', body)
+
+    #Or, remove anything but alphanumeric, whitespace, and periods
+    #js:dataString and indexLunr are both parsed
+    #TODO: add some basic chars
+    tmp1 = [re.sub(r"[^a-zA-Z0-9]+", ' ', k) for k in body.split(".")]
+    tmp2 = '.'.join(tmp1).strip()
+    return tmp2
 
 def create_index_report(output_dir, docs):
     template = 'index.html'
@@ -96,11 +103,12 @@ def create_index_report(output_dir, docs):
         rec_dict = rec._asdict()
         rec_dict['id'] = str(idx)
         rec_dict_str = {k:str(v) for k,v in rec_dict.items()}           #TODO:NOTE> all values converted to string before populating index
-        enforce_json_compliant = enforce_json_compliant_string(rec_dict_str)
-        records.append(enforce_json_compliant)
-    lunr_index = lunr(
-        ref='id', fields=('title', 'body'), documents=records
-        )
+        rec_dict_str['body'] = enforce_json_compliant_string(rec_dict_str['body'])
+        records.append(rec_dict_str)
+    lunr_index = lunr(ref='id', 
+                      fields=('title', 'body'), 
+                      documents=records
+                      )
     template_data = {'records': records,
                      'lunr_index': lunr_index.serialize(),
                      'svg_image': svg_image

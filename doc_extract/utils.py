@@ -29,6 +29,7 @@ Keys are format, encryption, title, author, subject, keywords, (creator, produce
 record_attrs = [
         #file indexing
         "id",
+        "reference_number",
         "filepath",
         "filename_original",
         "filename_modified",
@@ -42,7 +43,6 @@ record_attrs = [
         "date",
 
         #inferred / searchable
-        "reference_number",
         "title",
         "author",
         "subject",
@@ -50,6 +50,8 @@ record_attrs = [
         "pp_toc",
 
         "body",
+        "clean_body",
+        "readability_score",
         "tag_categories",
         "keywords",
         "summary"
