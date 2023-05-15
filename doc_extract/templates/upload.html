@@ -22,9 +22,155 @@
 </head>
 
 <body>
-    <form action="http://localhost:5000/uploader" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" />
-        <input type="submit" /></form>
+    <div id="vm">
+        <div>
+            <!-- Using value -->
+            <b-button v-b-modal="'import-modal'">Import files</b-button>
+
+            <!-- The modal -->
+            <b-modal id="import-modal" ok-only>
+                <template #modal-title>
+                Select files for import
+            </template>
+                <br>
+                <form name="uploadForm">
+                    <div>
+                        <input id="uploadInput" type="file" @change="previewFiles" multiple /><br>
+                        <label for="fileSize">Total size:</label>
+                        <output id="fileSize">0</output>
+                    </div>
+                </form>
+                <template #modal-footer>
+                    <button @click="uploadBtn" v-b-modal.modal-close_visit class="btn btn-success btn-sm m-1">Import</button>
+                </template>
+            </b-modal>
+            <br>
+            <textarea id="txt"></textarea>
+        </div>
+    </div>
+
+    <script>
+        vm = new Vue({
+            el: "#vm",
+            delimiters: ['[[', ']]'],
+            data() {
+                return {
+                    fileList: [],
+                    key: true
+                }
+            },
+            methods: {
+                previewFiles(event) {
+                    // Calculate total size
+                    let numberOfBytes = 0;
+                    for (const file of uploadInput.files) {
+                        numberOfBytes += file.size;
+                    }
+                    // Approximate to the closest prefixed unit
+                    const units = [
+                        "B",
+                        "KiB",
+                        "MiB",
+                        "GiB",
+                        "TiB",
+                        "PiB",
+                        "EiB",
+                        "ZiB",
+                        "YiB",
+                    ];
+                    const exponent = Math.min(
+                        Math.floor(Math.log(numberOfBytes) / Math.log(1024)),
+                        units.length - 1
+                    );
+                    const approx = numberOfBytes / 1024 ** exponent;
+                    const output =
+                        exponent === 0 ?
+                        `${numberOfBytes} bytes` :
+                        `${approx.toFixed(3)} ${
+                      units[exponent]
+                    } (${numberOfBytes} bytes)`;
+                    document.getElementById("fileSize").textContent = output;
+                },
+                uploadBtn(event) {
+                    for (const file of uploadInput.files) {
+                        new Promise(function(resolve, reject) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    resolve(e.target.result);
+                                };
+                                reader.readAsText(file);
+                                reader.onerror = reject;
+                            })
+                            .then(function(data) {
+                                file.body = data;
+                                vm._data.fileList.push(file);
+                            })
+                            .catch(function(err) {
+                                console.log(err)
+                            });
+                    }
+                    vm.$bvModal.hide("import-modal");
+                }
+            }
+        });
+
+
+
+        /*
+        const uploadInput = document.getElementById("uploadInput");
+        // Prepare for reading files
+        let contentArr = '';
+        const fileList = [];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            txt = e.target.result;
+            contentArr += txt;
+            document.getElementById("txt").textContent = contentArr;
+            console.log(contentArr);
+        };
+        uploadInput.addEventListener(
+            "change",
+            () => {
+                // Calculate total size
+                let numberOfBytes = 0;
+                for (const file of uploadInput.files) {
+                    numberOfBytes += file.size;
+                    reader.readAsText(file);
+                    fileList.push(file);
+                }
+
+                // Approximate to the closest prefixed unit
+                const units = [
+                    "B",
+                    "KiB",
+                    "MiB",
+                    "GiB",
+                    "TiB",
+                    "PiB",
+                    "EiB",
+                    "ZiB",
+                    "YiB",
+                ];
+                const exponent = Math.min(
+                    Math.floor(Math.log(numberOfBytes) / Math.log(1024)),
+                    units.length - 1
+                );
+                const approx = numberOfBytes / 1024 ** exponent;
+                const output =
+                    exponent === 0 ?
+                    `${numberOfBytes} bytes` :
+                    `${approx.toFixed(3)} ${
+                      units[exponent]
+                    } (${numberOfBytes} bytes)`;
+
+                //document.getElementById("fileNum").textContent = uploadInput.files.length;
+                document.getElementById("fileSize").textContent = output;
+
+            },
+            false
+        );
+        */
+    </script>
 </body>
 
 </html>
