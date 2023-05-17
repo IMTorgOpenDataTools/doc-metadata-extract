@@ -27,6 +27,7 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
     <script src="https://unpkg.com/bootstrap-vue@2.23.1/dist/bootstrap-vue.js"></script>
     <script src="https://unpkg.com/lunr/lunr.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.6.172/pdf.min.js"></script>
 
     <style>
         .item1 {
@@ -191,8 +192,34 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
         </div>
 
         <div class="item14 results" id="results">
-            <b-button size="sm" v-on:click="expandAll">Expand All</b-button>
-            <b-button size="sm" v-on:click="collapseAll">Collapse All</b-button>
+            <div v-if="showImportBtn">
+                <b-button size="sm" v-b-modal="'import-modal'">Import Files</b-button>
+                <b-button size="sm" v-on:click="createTable">Create Table</b-button>
+
+                <div>
+                    <!-- The modal -->
+                    <b-modal id="import-modal" ok-only>
+                        <template #modal-title>
+                            Select files for import
+                        </template>
+                        <br>
+                        <form name="uploadForm">
+                            <div>
+                                <input id="uploadInput" type="file" @change="previewFiles" multiple /><br>
+                                <label for="fileSize">Total size:</label>
+                                <output id="fileSize">0</output>
+                            </div>
+                        </form>
+                        <template #modal-footer>
+                                <button @click="uploadBtn" v-b-modal.modal-close_visit class="btn btn-success btn-sm m-1">Import</button>
+                            </template>
+                    </b-modal>
+                </div>
+            </div>
+            <div v-if="initializeTable">
+                <b-button size="sm" v-on:click="expandAll">Expand All</b-button>
+                <b-button size="sm" v-on:click="collapseAll">Collapse All</b-button>
+            </div>
         </div>
 
 
@@ -202,9 +229,15 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
         </div>
 
         <div class="item3">
-            <template>
+            <div v-if="initializeTable">
+                <template>
                 <div>
-                  <b-table hover 
+                    <!--refs
+                        * showDetails: https://stackoverflow.com/questions/52327549/bootstrap-vue-table-show-details-when-row-clicked
+                        * reactivity: https://github.com/bootstrap-vue/bootstrap-vue/issues/2960
+                        * ...
+                    -->
+                <b-table hover 
                   :items="items" 
                   :fields="fields"
                   :filter="filter"
@@ -214,6 +247,7 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
                   responsive="sm" sticky-header="1000px"
                   bordered
                   thead-class="tableHead bg-dark text-white"
+                  @row-clicked="expandAdditionalInfo"                     
                   >
             <template #cell(show_details)="row">
                       <!-- As `row.showDetails` is one-way, we call the toggleDetails function on @change -->
@@ -222,7 +256,7 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
                       </b-form-checkbox>
                     </template>
 
-            <template #row-details="row">
+                <template #row-details="row">
                       <b-card>
                         <b-row class="mb-2">
                         
@@ -238,10 +272,12 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
                       </b-card>
                     </template>
 
-            </b-table>
+                </b-table>
+            </div>
+            </template>
         </div>
-        </template>
     </div>
+
 
     <div class="item4"></div>
     <div class="item5"></div>
@@ -251,8 +287,9 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
     <script>
         //input
         MARGIN = 250
-        const dataString = '{{records | tojson | safe}}'
-        const indexString = '{{lunr_index | tojson | safe}}'
+            //const dataString = '{{records | tojson | safe}}'
+            //const indexString = '{{lunr_index | tojson | safe}}'
+
 
         //support functions
         const getDateFromString = str => {
@@ -283,40 +320,79 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
             return arr
         }
 
-        //program flow
+        function getFormattedFileSize(numberOfBytes) {
+            // Approximate to the closest prefixed unit
+            const units = [
+                "B",
+                "KiB",
+                "MiB",
+                "GiB",
+                "TiB",
+                "PiB",
+                "EiB",
+                "ZiB",
+                "YiB",
+            ];
+            const exponent = Math.min(
+                Math.floor(Math.log(numberOfBytes) / Math.log(1024)),
+                units.length - 1
+            );
+            const approx = numberOfBytes / 1024 ** exponent;
+            const output =
+                exponent === 0 ?
+                `${numberOfBytes} bytes` :
+                `${approx.toFixed(3)} ${
+                      units[exponent]
+                    } (${numberOfBytes} bytes)`;
+            return output;
+        }
+
+
+
+
+
+
+        // Program flow
         let data = {
             fields: [{
                 key: 'id',
                 label: 'Id'
             }, {
-                key: 'show_details',
-                label: 'Details'
-            }, {
-                key: 'filename_modified',
-                sortable: true
+                key: 'filepath',
+                label: 'Path',
+                sortable: true,
+                formatter: "getFormattedPath"
             }, {
                 key: 'filename_original',
+                label: 'File Name',
                 sortable: true
             }, {
                 key: 'page_nos',
+                label: 'Pages',
                 sortable: true
             }, {
                 key: 'length_lines',
+                label: 'Sentences',
                 sortable: true
             }, {
                 key: 'filename_original',
                 sortable: true
             }, {
                 key: 'file_size_mb',
-                sortable: true
+                label: 'File Size',
+                sortable: true,
+                formatter: "getFormattedFileSize"
             }, {
                 key: 'date',
                 sortable: true,
                 formatter: "formatDateAssigned"
             }],
-            items: JSON.parse(dataString),
+            items: [], //JSON.parse(dataString),
+            lunrIndex: null,
             filter: [],
-            filterString: []
+            filterString: [],
+            showImportBtn: true,
+            initializeTable: false
         }
 
         vm = new Vue({
@@ -326,13 +402,142 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
                 return data
             },
             methods: {
+
+                // Modal logic
+                previewFiles() {
+                    // Calculate total size
+                    let numberOfBytes = 0;
+                    for (const file of uploadInput.files) {
+                        numberOfBytes += file.size;
+                    }
+                    const output = getFormattedFileSize(numberOfBytes);
+                    document.getElementById("fileSize").textContent = output;
+                },
+                uploadBtn() {
+                    let idx = 0
+                    for (const file of uploadInput.files) {
+                        fileContent = [];
+                        console.log(file);
+                        new Promise(function(resolve, reject) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    let typedarray = new Uint8Array(e.target.result); //Step 4:turn array buffer into typed array
+                                    const loadingTask = pdfjsLib.getDocument(typedarray); //Step 5:pdfjs should be able to read this
+                                    loadingTask.promise.then(pdf => {
+                                        //document is loaded
+                                        let total = pdf.numPages;
+                                        let length_lines_array = [];
+                                        let layers = {};
+                                        for (i = 1; i <= total; i++) {
+                                            pdf.getPage(i).then(function(page) {
+                                                let n = page.pageNumber;
+                                                let page_text = "";
+                                                page.getTextContent().then(function(textContent) {
+                                                    for (item of textContent.items) {
+                                                        page_text += String(item.str);
+                                                    }
+                                                    let sentences = (page_text.match(/./g) || []).length;
+                                                    length_lines_array.push(sentences);
+                                                    layers[n] = page_text + "\n\n";
+                                                });
+                                            });
+                                        };
+                                        resolve({
+                                            index: idx,
+                                            page_nos: total,
+                                            length_lines_array: length_lines_array,
+                                            body: layers
+                                        })
+                                        idx++;
+                                    });
+                                }
+                                reader.readAsArrayBuffer(file);
+                                reader.onerror = reject;
+                            })
+                            .then(function(data) {
+
+                                //DocumentRecord
+                                const record = {};
+
+                                // file indexing
+                                record.id = String(data.index);
+                                record.reference_number = null;
+                                record.filepath = file.webkitRelativePath ? file.webkitRelativePath : null;
+                                var re = /(?:\.([^.]+))?$/;
+                                let extension = re.exec(file.name)[1];
+                                record.filename_original = file.name.replace('.' + extension, '');
+                                record.filename_modified = null;
+
+                                // raw
+
+                                record.file_extension = extension;
+                                record.filetype = file.type;
+                                record.page_nos = data.page_nos;
+                                record.length_lines_array = data.length_lines_array;
+                                record.length_lines = null;
+                                record.file_size_mb = file.size;
+                                record.date = file.lastModified;
+
+                                //inferred / searchable
+                                record.title = null;
+                                record.author = null;
+                                record.subject = null;
+                                record.toc = null;
+                                record.pp_toc = null;
+
+                                record.body = data.body;
+                                record.clean_body = null;
+                                record.readability_score = null;
+                                record.tag_categories = null;
+                                record.keywords = null;
+                                record.summary = null;
+
+                                //frontend field
+                                record.snippet = null;
+                                record._showDetails = false;
+
+                                vm._data.items.push(record);
+                            })
+                            .catch(function(err) {
+                                console.log(err)
+                            });
+                    }
+                    vm.$bvModal.hide("import-modal");
+                },
+                createTable() {
+                    //modify data items
+                    let idx = 0;
+                    for (const item of vm._data.items) {
+                        let lengthLines = item.length_lines_array.reduce((s, v) => s += (v | 0));
+                        vm._data.items[idx].length_lines = lengthLines;
+                        let bodyArr = Object.values(item.body);
+                        let clean_body = bodyArr.length > 0 ? bodyArr.reduce((partialSum, a) => partialSum += (a || 0)) : null;
+                        vm._data.items[idx].clean_body = clean_body;
+                        idx++;
+                    }
+                    //create lunr index
+                    const lunrIndex = lunr(function() {
+                        this.ref('id')
+                        this.field('clean_body')
+                        vm._data.items.forEach(function(doc) {
+                            this.add(doc)
+                        }, this)
+                    })
+                    vm._data.lunrIndex = lunrIndex;
+
+                    vm._data.showImportBtn = false;
+                    vm._data.initializeTable = true;
+                },
+
+
+                // Table logic
                 onFiltered(row, filter) {
                     row.snippet = null
                     if (filter.length == 0) {
                         row.snippet = null
                         return true;
                     } else if (filter.includes(row.id)) {
-                        body = row.body
+                        body = row.clean_body
                         idx = body.indexOf(vm._data.filterString)
                         row.snippet = body.slice(idx - MARGIN, idx + MARGIN)
                         return true;
@@ -347,25 +552,33 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
                 collapseAll() {
                     this.items.map(item => this.$set(item, '_showDetails', false))
                 },
+                expandAdditionalInfo(row) {
+                    row._showDetails = !row._showDetails;
+                },
                 formatDateAssigned(value) {
                     const dt = getDateFromString(value)
                     const formattedDate = dt.toLocaleDateString()
                     return formattedDate;
+                },
+                getFormattedFileSize(value) {
+                    return getFormattedFileSize(value);
+                },
+                getFormattedPath(path) {
+                    return path ? path : './';
                 }
             }
         })
 
 
-        const Files = JSON.parse(dataString)
-        const lunrIndex = lunr.Index.load(JSON.parse(indexString))
-            /*
-            Onclick handler for search button
-            When we call search, we will call the search function on lunr with the parameters from 
-            the input. Lunr is going to return an array containing a score and URL. We are using the 
-            filter function to match that with the items from the response (saved in allposts) so 
-            that we can grab the title as well.
-            I am doing another filter at the end to remove all the null elements. 
-            */
+
+        /*
+        Onclick handler for search button
+        When we call search, we will call the search function on lunr with the parameters from 
+        the input. Lunr is going to return an array containing a score and URL. We are using the 
+        filter function to match that with the items from the response (saved in allposts) so 
+        that we can grab the title as well.
+        I am doing another filter at the end to remove all the null elements. 
+        */
         function search() {
             //document.getElementById("results").innerHTML = "results go here...";
             let query = document.getElementById("search-field").value;
@@ -376,8 +589,8 @@ https://stackoverflow.com/questions/21626048/unable-to-pass-jinja2-variables-int
                 vm._data.filterString.pop()
                 return []
             }
-            let results = lunrIndex.search(query).map(result => {
-                return Files.filter(file => {
+            let results = vm._data.lunrIndex.search(query).map(result => {
+                return vm._data.items.filter(file => {
                     return String(file.id) === result.ref; //&& result.score > .4;
                 })[0];
             });

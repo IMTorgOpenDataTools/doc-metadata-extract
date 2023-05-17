@@ -15,6 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
     <script src="https://unpkg.com/bootstrap-vue@2.23.1/dist/bootstrap-vue.js"></script>
     <script src="https://unpkg.com/lunr/lunr.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.6.172/pdf.min.js"></script>
 
     <style>
 
@@ -25,7 +26,7 @@
     <div id="vm">
         <div>
             <!-- Using value -->
-            <b-button v-b-modal="'import-modal'">Import files</b-button>
+            <b-button v-if="showImportBtn" v-b-modal="'import-modal'">Import files</b-button>
 
             <!-- The modal -->
             <b-modal id="import-modal" ok-only>
@@ -45,7 +46,9 @@
                 </template>
             </b-modal>
             <br>
-            <textarea id="txt"></textarea>
+            <div v-if="initializeTable">
+                <textarea id="txt"></textarea>
+            </div>
         </div>
     </div>
 
@@ -55,8 +58,10 @@
             delimiters: ['[[', ']]'],
             data() {
                 return {
+                    test_pdf: [],
                     fileList: [],
-                    key: true
+                    showImportBtn: true,
+                    initializeTable: false
                 }
             },
             methods: {
@@ -93,83 +98,58 @@
                 },
                 uploadBtn(event) {
                     for (const file of uploadInput.files) {
+                        console.log(file)
+                        fileContent = [];
                         new Promise(function(resolve, reject) {
                                 const reader = new FileReader();
                                 reader.onload = (e) => {
-                                    resolve(e.target.result);
-                                };
-                                reader.readAsText(file);
+                                        //resolve(e.target.result);    //text
+                                        var typedarray = new Uint8Array(e.target.result); //Step 4:turn array buffer into typed array
+                                        const loadingTask = pdfjsLib.getDocument(typedarray); //Step 5:pdfjs should be able to read this
+                                        loadingTask.promise.then(pdf => {
+                                            // The document is loaded here...
+                                            var total = pdf.numPages;
+                                            var layers = {};
+                                            for (i = 1; i <= total; i++) {
+                                                pdf.getPage(i).then(function(page) {
+                                                    let n = page.pageNumber;
+                                                    let page_text = "";
+                                                    page.getTextContent().then(function(textContent) {
+                                                        for (item of textContent.items) {
+                                                            page_text += String(item.str);
+                                                        }
+                                                        layers[n] = page_text + "\n\n";
+                                                    });
+                                                });
+                                            };
+                                            resolve(layers)
+                                        });
+                                    }
+                                    //reader.readAsText(file);    //text
+                                reader.readAsArrayBuffer(file);
                                 reader.onerror = reject;
                             })
                             .then(function(data) {
                                 file.body = data;
                                 vm._data.fileList.push(file);
+                                pages = "";
+                                for (const page in data) {
+                                    console.log(data[page])
+                                    pages += data[page];
+                                }
+                                document.querySelector("textarea").innerText = pages; //only for demo
                             })
                             .catch(function(err) {
                                 console.log(err)
                             });
                     }
                     vm.$bvModal.hide("import-modal");
+                    vm._data.showImportBtn = false;
+                    vm._data.initializeTable = true;
+
                 }
             }
         });
-
-
-
-        /*
-        const uploadInput = document.getElementById("uploadInput");
-        // Prepare for reading files
-        let contentArr = '';
-        const fileList = [];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            txt = e.target.result;
-            contentArr += txt;
-            document.getElementById("txt").textContent = contentArr;
-            console.log(contentArr);
-        };
-        uploadInput.addEventListener(
-            "change",
-            () => {
-                // Calculate total size
-                let numberOfBytes = 0;
-                for (const file of uploadInput.files) {
-                    numberOfBytes += file.size;
-                    reader.readAsText(file);
-                    fileList.push(file);
-                }
-
-                // Approximate to the closest prefixed unit
-                const units = [
-                    "B",
-                    "KiB",
-                    "MiB",
-                    "GiB",
-                    "TiB",
-                    "PiB",
-                    "EiB",
-                    "ZiB",
-                    "YiB",
-                ];
-                const exponent = Math.min(
-                    Math.floor(Math.log(numberOfBytes) / Math.log(1024)),
-                    units.length - 1
-                );
-                const approx = numberOfBytes / 1024 ** exponent;
-                const output =
-                    exponent === 0 ?
-                    `${numberOfBytes} bytes` :
-                    `${approx.toFixed(3)} ${
-                      units[exponent]
-                    } (${numberOfBytes} bytes)`;
-
-                //document.getElementById("fileNum").textContent = uploadInput.files.length;
-                document.getElementById("fileSize").textContent = output;
-
-            },
-            false
-        );
-        */
     </script>
 </body>
 
